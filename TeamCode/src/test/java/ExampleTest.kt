@@ -6,7 +6,6 @@ class ExampleTest {
     @Test
     fun `print hello world`() {
         println("Hello World!")
-
         Assert.assertTrue(true)
     }
 }
