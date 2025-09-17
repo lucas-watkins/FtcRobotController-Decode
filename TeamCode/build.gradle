@@ -8,8 +8,15 @@
 // please think carefully as to whether such customizations are really necessary
 // before doing so.
 
-
 // Custom definitions may go here
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+
+plugins {
+    id 'kotlin-android'
+}
+
+kotlin.compilerOptions.setJvmTarget(JvmTarget.JVM_1_8)
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
@@ -25,4 +32,6 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 }
