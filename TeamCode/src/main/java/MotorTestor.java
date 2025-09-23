@@ -138,14 +138,16 @@ public class MotorTestor extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            //
-            frontLeftPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            backLeftPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            frontRightPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            backRightPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            // comments are for the woking config in the test bot(beside buttons).
+            frontLeftPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad port 3
+            backLeftPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad port 2
+            frontRightPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad port 1
+            backRightPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad prot 0
 
 
             // Send calculated power to wheels
+
+            // comments are for the woking config in the test bot.
             frontLeftDrive.setPower(frontLeftPower);
             frontRightDrive.setPower(frontRightPower);
             backLeftDrive.setPower(backLeftPower);
