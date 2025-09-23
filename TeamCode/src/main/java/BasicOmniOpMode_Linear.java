@@ -90,7 +90,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
 
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE); // the motors are mirrored
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE); // the motors are mirrored; this need to be fixed
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
