@@ -90,7 +90,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
 
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE); // the motors are mirrored; this need to be fixed
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD); // the motors are mirrored; this need to be fixed on the test bot
         backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -103,10 +103,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
+
+
         while (opModeIsActive()) {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+
+            // TODO get controls
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
