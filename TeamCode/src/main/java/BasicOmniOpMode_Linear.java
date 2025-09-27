@@ -91,8 +91,11 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
 
-
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE); // the motors are mirrored; this need to be fixed on the test bot
+        // the front of the test bot is by the switch; this may be or may not be on opposite directions on the test bot
+        // if the test bot is going backword but other fine check the front of the test bot and
+        // the front of the main bot are facing the same way. if they are facing opposite directions
+        // let Caden and Connor know
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
