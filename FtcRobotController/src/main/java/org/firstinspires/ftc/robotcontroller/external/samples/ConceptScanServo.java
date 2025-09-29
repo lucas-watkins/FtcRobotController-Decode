@@ -93,7 +93,7 @@ public class ConceptScanServo extends LinearOpMode {
                 position -= INCREMENT ;
                 if (position <= MIN_POS ) {
                     position = MIN_POS;
-                    rampUp = !rampUp;  // Switch ramp direction
+                    rampUp = !rampUp;  // Switch ramp direction ( who did this?)
                 }
             }
 
