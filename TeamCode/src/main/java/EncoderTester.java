@@ -26,12 +26,16 @@ public class EncoderTester extends LinearOpMode
 
         while(opModeIsActive())
         {
-            boolean motorOn = gamepad1.aWasPressed();
+            // this
+            boolean motorOn = gamepad1.dpad_down;
             if(motorOn) {testMotor.setPower(1.0);}
             else {testMotor.setPower(0.0);}
 
             postion = testMotor.getCurrentPosition();
             telemetry.addData("motor position" , postion);
+            telemetry.update();
+
+
         }
 
     }
