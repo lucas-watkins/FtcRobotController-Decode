@@ -31,17 +31,6 @@ class PathBuilder(val gridWidth: Int, val gridHeight: Int) {
         }
     }
 
-    enum class Direction {
-        FORWARD,
-        BACKWARD,
-        LEFT,
-        RIGHT,
-        DIAGONAL_FORWARD_RIGHT,
-        DIAGONAL_BACKWARD_RIGHT,
-        DIAGONAL_FORWARD_LEFT,
-        DIAGONAL_BACKWARD_LEFT,
-    }
-
     private companion object {
         val dirMatrix = arrayOf(
             Vector2(0, 1),
@@ -68,13 +57,13 @@ class PathBuilder(val gridWidth: Int, val gridHeight: Int) {
         }
     }
 
-    private fun tracePath(end: Cell): Array<Cell> {
-        val path = mutableSetOf<Cell>()
+    private fun tracePath(end: Cell): Array<Vector2<Int>> {
+        val path = mutableSetOf<Vector2<Int>>()
         var row = end.row
         var col = end.col
 
         while (!(grid[row][col].parentRow == row && grid[row][col].parentCol == col)) {
-            path.add(grid[row][col])
+            path.add(Vector2(grid[row][col].row, grid[row][col].col))
             val tRow = grid[row][col].parentRow
             val tCol = grid[row][col].parentCol
 
@@ -82,12 +71,13 @@ class PathBuilder(val gridWidth: Int, val gridHeight: Int) {
             col = tCol ?: throw RuntimeException("tracePath encountered a null parentCol")
         }
 
-        path.add(grid[row][col])
+        path.add(Vector2(grid[row][col].row, grid[row][col].col))
+        grid = newGrid() // Let the old mutated grid be collected by GC
 
         return path.reversed().toTypedArray()
     }
 
-    fun buildPath(start: Vector2<Int>, end: Vector2<Int>): Array<Cell> {
+    fun buildPath(start: Vector2<Int>, end: Vector2<Int>): Array<Vector2<Int>> {
 
         if (start.x !in 0..<gridWidth || start.y !in 0..<gridHeight) {
             throw RuntimeException("Start or End is Invalid")
