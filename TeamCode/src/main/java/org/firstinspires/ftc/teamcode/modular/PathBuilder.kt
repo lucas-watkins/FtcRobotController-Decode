@@ -12,7 +12,7 @@ class PathBuilder(val gridWidth: Int, val gridHeight: Int) {
         var distanceCost: Int = INF,
         var heuristicCost: Int = 0,
         var visited: Boolean = false,
-        val blocked: Boolean = false
+        var blocked: Boolean = false
         ) : Comparable<Cell> {
 
         companion object {
@@ -79,7 +79,9 @@ class PathBuilder(val gridWidth: Int, val gridHeight: Int) {
 
     fun buildPath(start: Vector2<Int>, end: Vector2<Int>): Array<Vector2<Int>> {
 
-        if (start.x !in 0..<gridWidth || start.y !in 0..<gridHeight) {
+        if (start.x !in 0..<gridWidth || start.y !in 0..<gridHeight
+            || end.x !in 0..<gridWidth || end.y !in 0..<gridHeight) {
+
             throw RuntimeException("Start or End is Invalid")
         }
 
