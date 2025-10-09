@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.modular
 
 import kotlin.test.Test
 import kotlin.test.assertTrue
-import org.firstinspires.ftc.teamcode.modular.Units
 
 class UnitsTest {
     private fun isInEpsilon(x: Double, y: Double, epsilon: Double = 0.000001): Boolean {
@@ -23,7 +22,5 @@ class UnitsTest {
     fun `tile to feet`() {
         assertTrue(isInEpsilon(2.0, Units.convert(1.0, Units.TILE, Units.FT)))
     }
-
-    // Freshmen labor starts here...
 
 }
