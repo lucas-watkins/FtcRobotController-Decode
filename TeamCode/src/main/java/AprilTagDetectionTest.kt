@@ -6,12 +6,11 @@ class AprilTagDetectionTest : LinearOpMode() {
     lateinit var aprilTagDetector: AprilTagDetector
 
     init {
+        aprilTagDetector = AprilTagDetector(hardwareMap, "webcam", debugMode = true) // Can't be set in the constructor because the hardwaremap won't be initialized yet
         waitForStart()
     }
 
     override fun runOpMode() {
-        aprilTagDetector = AprilTagDetector(hardwareMap, "webcam", debugMode = true) // Can't be set during the initialization stage for some reason
-
         while (opModeIsActive()) {
             val tags = aprilTagDetector.getTags()
             for (tag in tags) {
