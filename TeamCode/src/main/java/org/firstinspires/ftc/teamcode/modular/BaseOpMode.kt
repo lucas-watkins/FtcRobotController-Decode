@@ -30,7 +30,7 @@ abstract class BaseOpMode : OpMode() {
             if (e is IllegalArgumentException) {
                 telemetry.addLine(e.message ?: "A hardware device could not be found")
             } else {
-                telemetry.addLine("Failed to initialize hardware!!!")
+                telemetry.addLine("Failed to initialize hardware!")
             }
             telemetry.update()
         }
