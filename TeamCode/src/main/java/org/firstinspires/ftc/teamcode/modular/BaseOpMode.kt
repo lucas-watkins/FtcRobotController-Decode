@@ -26,8 +26,12 @@ abstract class BaseOpMode : OpMode() {
 
             // Custom initialization block
             initialize()
-        } catch (_: Exception) {
-            telemetry.addLine("Failed to initialize hardware!!!")
+        } catch (e: Exception) {
+            if (e is IllegalArgumentException) {
+                telemetry.addLine(e.message ?: "A hardware device could not be found")
+            } else {
+                telemetry.addLine("Failed to initialize hardware!!!")
+            }
             telemetry.update()
         }
     }
