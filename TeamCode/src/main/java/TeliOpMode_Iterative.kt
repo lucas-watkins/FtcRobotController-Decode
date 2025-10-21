@@ -32,7 +32,8 @@ class TeliOpMode_Iterative : OpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
-    // TODO find and change vars to best practise
+    // TODO stop using getter and setter methods
+    // use
     private var runtime = ElapsedTime()
     private var frontLeftDrive: DcMotor? = null
     private var backLeftDrive: DcMotor? = null
@@ -164,12 +165,14 @@ class TeliOpMode_Iterative : OpMode() {
             backRightPower /= max
         }
 
-        frontLeftDrive!!.setPower(frontLeftPower)
-        frontRightDrive!!.setPower(frontRightPower)
-        backLeftDrive!!.setPower(backLeftPower)
-        backRightDrive!!.setPower(backRightPower)
-        launchRight!!.setPower(launchSpeed)
-        launchLeft!!.setPower(launchSpeed)
+        frontLeftDrive!!.power = frontLeftPower
+        frontRightDrive!!.power = frontRightPower
+
+        backLeftDrive!!.power = backLeftPower
+        backRightDrive!!.power = backRightPower
+        launchRight!!.power = launchSpeed
+        launchLeft!!.power = launchSpeed
+
 
 
         /*
@@ -177,8 +180,8 @@ class TeliOpMode_Iterative : OpMode() {
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
         */
-        telemetry.addData("left encoder value: ", launchLeft!!.getCurrentPosition())
-        telemetry.addData("right encoder value: ", launchRight!!.getCurrentPosition())
+        telemetry.addData("left encoder value: ", launchLeft!!.currentPosition)
+        telemetry.addData("right encoder value: ", launchRight!!.currentPosition)
         telemetry.addData("launchSpeed: ", launchSpeed.toString())
         telemetry.update()
     }
