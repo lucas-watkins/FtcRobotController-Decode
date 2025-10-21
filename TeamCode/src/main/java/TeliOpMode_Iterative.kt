@@ -1,10 +1,17 @@
+package org.firstinspires.ftc.teamcode
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.util.ElapsedTime
 import kotlin.math.abs
 import kotlin.math.max
+
+
+
+
 
 /*
 * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -19,11 +26,14 @@ import kotlin.math.max
 * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
 * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
 */
-@TeleOp(name = "Basic: Iterative OpMode", group = "Iterative OpMode")
-@Disabled
+@TeleOp(name = "Teliop kotlin", group = "Iterative OpMode")
+//@Disabled
 class TeliOpMode_Iterative : OpMode() {
     // Declare OpMode members.
 
+    // Declare OpMode members.
+    // TODO find and change vars to best practise
+    private var runtime = ElapsedTime()
     private var frontLeftDrive: DcMotor? = null
     private var backLeftDrive: DcMotor? = null
     private var frontRightDrive: DcMotor? = null
@@ -36,6 +46,8 @@ class TeliOpMode_Iterative : OpMode() {
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
+    private var launchSpeed = 0.0
+    private var max = 0.0
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -53,10 +65,10 @@ class TeliOpMode_Iterative : OpMode() {
         launchLeft = hardwareMap.get<DcMotor?>(DcMotor::class.java, "left_launch")
         launchRight = hardwareMap.get<DcMotor?>(DcMotor::class.java, "right_launch")
 
-        frontLeftDrive!!.setDirection(DcMotor.Direction.REVERSE)
-        backLeftDrive!!.setDirection(DcMotor.Direction.REVERSE)
-        frontRightDrive!!.setDirection(DcMotor.Direction.REVERSE)
-        backRightDrive!!.setDirection(DcMotor.Direction.REVERSE)
+        frontLeftDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
+        backLeftDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
+        frontRightDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
+        backRightDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
 
         launchLeft!!.setDirection(DcMotorSimple.Direction.REVERSE)
         launchRight!!.setDirection(DcMotorSimple.Direction.REVERSE)
@@ -103,8 +115,7 @@ class TeliOpMode_Iterative : OpMode() {
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
 
         // TODO get controls
-        axialMotion =
-            -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
+        axialMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
@@ -132,10 +143,10 @@ class TeliOpMode_Iterative : OpMode() {
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
-        val frontLeftPower = axialMotion + lateralMotion + yawMotion
-        val frontRightPower = axialMotion - lateralMotion - yawMotion
-        val backLeftPower = axialMotion - lateralMotion + yawMotion
-        val backRightPower = axialMotion + lateralMotion - yawMotion
+        var frontLeftPower = axialMotion + lateralMotion + yawMotion
+        var frontRightPower = axialMotion - lateralMotion - yawMotion
+        var backLeftPower = axialMotion - lateralMotion + yawMotion
+        var backRightPower = axialMotion + lateralMotion - yawMotion
 
 
         // Normalize the values so no wheel power exceeds 100%
