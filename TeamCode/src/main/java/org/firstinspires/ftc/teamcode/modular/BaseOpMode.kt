@@ -11,7 +11,7 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var rightFrontMotor: DcMotorEx
     protected lateinit var leftRearMotor: DcMotorEx
     protected lateinit var rightRearMotor: DcMotorEx
-    protected val driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
+    protected lateinit var driveTrain: Array<DcMotorEx>
 
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
@@ -19,12 +19,13 @@ abstract class BaseOpMode : OpMode() {
     // Don't override this function, override initialize instead
     override fun init() {
         try {
-            leftFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"leftFrontMotor")
-            rightFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"rightFrontMotor")
-            leftRearMotor = hardwareMap.get(DcMotorEx::class.java ,"leftRearMotor")
-            rightRearMotor = hardwareMap.get(DcMotorEx::class.java ,"rightRearMotor")
-            leftLauncherMotor = hardwareMap.get(DcMotorEx::class.java ,"leftLauncherMotor")
-            rightLauncherMotor = hardwareMap.get(DcMotorEx::class.java ,"rightLauncherMotor")
+            leftFrontMotor = hardwareMap["leftFrontMotor"] as DcMotorEx
+            rightFrontMotor = hardwareMap["rightFrontMotor"] as DcMotorEx
+            leftRearMotor = hardwareMap["leftRearMotor"] as DcMotorEx
+            rightRearMotor = hardwareMap["rightRearMotor"] as DcMotorEx
+            leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
+            rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
+            driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, rightRearMotor, leftRearMotor)
 
             // Custom initialization block
             initialize()
