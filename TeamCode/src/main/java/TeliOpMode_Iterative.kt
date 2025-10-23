@@ -1,16 +1,11 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
-import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import kotlin.math.abs
 import kotlin.math.max
-
-
-
 
 
 /*
@@ -28,27 +23,21 @@ import kotlin.math.max
 */
 @TeleOp(name = "Teliop kotlin", group = "Iterative OpMode")
 //@Disabled
-class TeliOpMode_Iterative : OpMode() {
+class TeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
     // TODO stop using getter and setter methods
     // use
+
     private var runtime = ElapsedTime()
-    private var frontLeftDrive: DcMotor? = null
-    private var backLeftDrive: DcMotor? = null
-    private var frontRightDrive: DcMotor? = null
-    private var backRightDrive: DcMotor? = null
-
-    private var launchRight: DcMotor? = null
-
-    private var launchLeft: DcMotor? = null
 
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
     private var max = 0.0
+
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -58,22 +47,7 @@ class TeliOpMode_Iterative : OpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get<DcMotor?>(DcMotor::class.java, "front_left_drive")
-        backLeftDrive = hardwareMap.get<DcMotor?>(DcMotor::class.java, "back_left_drive")
-        frontRightDrive = hardwareMap.get<DcMotor?>(DcMotor::class.java, "front_right_drive")
-        backRightDrive = hardwareMap.get<DcMotor?>(DcMotor::class.java, "back_right_drive")
-
-        launchLeft = hardwareMap.get<DcMotor?>(DcMotor::class.java, "left_launch")
-        launchRight = hardwareMap.get<DcMotor?>(DcMotor::class.java, "right_launch")
-
-        frontLeftDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
-        backLeftDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
-        frontRightDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
-        backRightDrive!!.setDirection(DcMotorSimple.Direction.REVERSE)
-
-        launchLeft!!.setDirection(DcMotorSimple.Direction.REVERSE)
-        launchRight!!.setDirection(DcMotorSimple.Direction.REVERSE)
-
+        // TODO rename to base opmode.
         frontRightDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         backLeftDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         frontLeftDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
@@ -84,6 +58,7 @@ class TeliOpMode_Iterative : OpMode() {
         launchLeft!!.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
         launchRight!!.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
 
+
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized")
         telemetry.update()
@@ -91,6 +66,10 @@ class TeliOpMode_Iterative : OpMode() {
 
         runtime.reset()
 
+
+    }
+
+    override fun initialize() {
 
     }
 
