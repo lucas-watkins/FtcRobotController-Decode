@@ -22,7 +22,7 @@ abstract class BaseOpMode : OpMode() {
             leftFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"leftFrontMotor")
             rightFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"rightFrontMotor")
             leftRearMotor = hardwareMap.get(DcMotorEx::class.java ,"leftRearMotor")
-            rightRearMotor = hardwareMap.get(DcMotorEx::class.java ,"rightFrontMotor")
+            rightRearMotor = hardwareMap.get(DcMotorEx::class.java ,"rightRearMotor")
             leftLauncherMotor = hardwareMap.get(DcMotorEx::class.java ,"leftLauncherMotor")
             rightLauncherMotor = hardwareMap.get(DcMotorEx::class.java ,"rightLauncherMotor")
 
