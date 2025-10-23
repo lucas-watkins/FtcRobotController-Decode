@@ -1,28 +1,30 @@
 package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 
 /*
 * Initializes drivetrain other hardware TBD
 */
 abstract class BaseOpMode : OpMode() {
-    protected lateinit var leftFrontMotor: DcMotor
-    protected lateinit var rightFrontMotor: DcMotor
-    protected lateinit var leftRearMotor: DcMotor
-    protected lateinit var rightRearMotor: DcMotor
-    protected lateinit var leftLauncherMotor: DcMotor
-    protected lateinit var rightLauncherMotor: DcMotor
+    protected lateinit var leftFrontMotor: DcMotorEx
+    protected lateinit var rightFrontMotor: DcMotorEx
+    protected lateinit var leftRearMotor: DcMotorEx
+    protected lateinit var rightRearMotor: DcMotorEx
+    protected val driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
+
+    protected lateinit var leftLauncherMotor: DcMotorEx
+    protected lateinit var rightLauncherMotor: DcMotorEx
 
     // Don't override this function, override initialize instead
     override fun init() {
         try {
-            leftFrontMotor = hardwareMap.dcMotor["leftFrontMotor"]
-            rightFrontMotor = hardwareMap.dcMotor["rightFrontMotor"]
-            leftRearMotor = hardwareMap.dcMotor["leftRearMotor"]
-            rightRearMotor = hardwareMap.dcMotor["rightRearMotor"]
-            leftLauncherMotor = hardwareMap.dcMotor["leftLauncherMotor"]
-            rightLauncherMotor = hardwareMap.dcMotor["rightLauncherMotor"]
+            leftFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"leftFrontMotor")
+            rightFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"rightFrontMotor")
+            leftRearMotor = hardwareMap.get(DcMotorEx::class.java ,"leftRearMotor")
+            rightRearMotor = hardwareMap.get(DcMotorEx::class.java ,"rightFrontMotor")
+            leftLauncherMotor = hardwareMap.get(DcMotorEx::class.java ,"leftLauncherMotor")
+            rightLauncherMotor = hardwareMap.get(DcMotorEx::class.java ,"rightLauncherMotor")
 
             // Custom initialization block
             initialize()
