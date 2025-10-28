@@ -46,11 +46,13 @@ class AprilTagDetector(webcam: CameraName, private val debugMode: Boolean) {
         return detections
     }
 
-    fun getPattern() : Pattern {
+    fun getPattern() : ArrayList<Pattern> {
         if (!debugMode) {
             visionPortal.setProcessorEnabled(processor, true)
             Thread.sleep(100)
         }
+
+        var result = ArrayList<Pattern>()
 
         val detections = processor.detections
 
@@ -59,14 +61,14 @@ class AprilTagDetector(webcam: CameraName, private val debugMode: Boolean) {
         if (detections.isEmpty()) throw Exception("No AprilTags detected")
 
         for (detection in detections) {
-            return when (detection.id) {
-                21 -> Pattern.GPP
-                22 -> Pattern.PGP
-                23 -> Pattern.PPG
+            when (detection.id) {
+                21 -> result.add(Pattern.GPP)
+                22 -> result.add(Pattern.PGP)
+                23 -> result.add(Pattern.PPG)
                 else -> continue
             }
         }
 
-        throw Exception("None of the detected AprilTags have a pattern")
+        return result
     }
 }
