@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -25,7 +26,9 @@ abstract class BaseOpMode : OpMode() {
             rightRearMotor = hardwareMap["rightRearMotor"] as DcMotorEx
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
-            driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, rightRearMotor, leftRearMotor)
+            driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
+
+            rightFrontMotor.direction = DcMotorSimple.Direction.REVERSE
 
             // Custom initialization block
             initialize()
