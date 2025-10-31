@@ -23,7 +23,7 @@ import kotlin.math.max
 */
 @TeleOp(name = "Teliop kotlin", group = "Iterative OpMode")
 //@Disabled
-class TeliOpMode_Iterative : BaseOpMode() {
+class TeliOpModeIterative : BaseOpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
@@ -48,15 +48,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         // TODO rename to base opmode.
-        frontRightDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
-        backLeftDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
-        frontLeftDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
-        backRightDrive!!.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER)
 
-        launchLeft!!.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
-        launchRight!!.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)
-        launchLeft!!.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
-        launchRight!!.setMode(DcMotor.RunMode.RUN_USING_ENCODER)
+        leftRearMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        leftFrontMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        rightRearMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        rightFrontMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+
+        leftLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        rightLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+
 
 
         // Wait for the game to start (driver presses START)
@@ -116,8 +116,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         /*
         if(launchSpeed == 0){
-            launchLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            launchRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
         */
 
@@ -144,13 +144,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
             backRightPower /= max
         }
 
-        frontLeftDrive!!.power = frontLeftPower
-        frontRightDrive!!.power = frontRightPower
+        leftFrontMotor.power = frontLeftPower
+       rightFrontMotor.power = frontRightPower
 
-        backLeftDrive!!.power = backLeftPower
-        backRightDrive!!.power = backRightPower
-        launchRight!!.power = launchSpeed
-        launchLeft!!.power = launchSpeed
+       leftRearMotor.power = backLeftPower
+        rightRearMotor.power = backRightPower
+        rightLauncherMotor.power = launchSpeed
+        leftLauncherMotor.power = launchSpeed
 
 
 
@@ -159,8 +159,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
         */
-        telemetry.addData("left encoder value: ", launchLeft!!.currentPosition)
-        telemetry.addData("right encoder value: ", launchRight!!.currentPosition)
+        telemetry.addData("left encoder value: ", leftLauncherMotor.currentPosition)
+        telemetry.addData("right encoder value: ", rightLauncherMotor.currentPosition)
         telemetry.addData("launchSpeed: ", launchSpeed.toString())
         telemetry.update()
     }

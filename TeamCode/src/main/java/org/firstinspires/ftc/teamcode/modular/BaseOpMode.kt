@@ -19,7 +19,7 @@ abstract class BaseOpMode : OpMode() {
     // Don't override this function, override initialize instead
     override fun init() {
         try {
-            leftFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"leftFrontMotor")
+           // leftFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"leftFrontMotor")
             rightFrontMotor = hardwareMap.get(DcMotorEx::class.java ,"rightFrontMotor")
             leftRearMotor = hardwareMap.get(DcMotorEx::class.java ,"leftRearMotor")
             rightRearMotor = hardwareMap.get(DcMotorEx::class.java ,"rightRearMotor")
