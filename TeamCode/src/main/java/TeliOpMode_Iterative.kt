@@ -23,7 +23,7 @@ import kotlin.math.max
 */
 @TeleOp(name = "Teliop kotlin", group = "Iterative OpMode")
 //@Disabled
-class TeliOpModeIterative : BaseOpMode() {
+class TeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
