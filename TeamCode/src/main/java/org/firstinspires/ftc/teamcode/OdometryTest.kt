@@ -27,10 +27,10 @@ class OdometryTest : BaseOpMode() {
         val turnPower = gamepad1.right_trigger - gamepad1.left_trigger
 
         val motorPowers = arrayOf(
-            gamepad1.left_stick_y - gamepad1.left_stick_x - turnPower,
-            gamepad1.left_stick_y + gamepad1.left_stick_x + turnPower,
-            gamepad1.left_stick_y + gamepad1.left_stick_x - turnPower,
-            gamepad1.left_stick_y - gamepad1.left_stick_x + turnPower,
+            -gamepad1.left_stick_y + gamepad1.left_stick_x + turnPower,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x - turnPower,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x + turnPower,
+            -gamepad1.left_stick_y + gamepad1.left_stick_x - turnPower,
         )
 
         val max = motorPowers.maxOf { i -> abs(i) }

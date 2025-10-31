@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 
@@ -28,7 +29,10 @@ abstract class BaseOpMode : OpMode() {
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
 
-            rightFrontMotor.direction = DcMotorSimple.Direction.REVERSE
+            driveTrain.forEachIndexed {i, m ->
+                if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }
+                m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            }
 
             // Custom initialization block
             initialize()
