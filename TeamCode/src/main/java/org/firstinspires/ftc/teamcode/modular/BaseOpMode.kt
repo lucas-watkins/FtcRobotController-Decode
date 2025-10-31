@@ -29,9 +29,17 @@ abstract class BaseOpMode : OpMode() {
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
 
+            //stops and resets then set to run at the start of every op mode
+            // this is needed as otherwise the encoder values will be false
+            leftLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            rightLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            leftLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            rightLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
             driveTrain.forEachIndexed {i, m ->
                 if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }
                 m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+                m.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             }
 
             // Custom initialization block
@@ -48,5 +56,6 @@ abstract class BaseOpMode : OpMode() {
 
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
+
 
 }

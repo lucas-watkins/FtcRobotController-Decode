@@ -36,40 +36,27 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
-    private var max = 0.0
+
 
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
-    override fun init() {
+
+
+     override fun initialize() {
         telemetry.addData("Status", "Initialized")
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         // TODO rename to base opmode.
 
-        leftRearMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        leftFrontMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        rightRearMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        rightFrontMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-
-        leftLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        rightLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-
-
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized")
         telemetry.update()
 
-
         runtime.reset()
-
-
-    }
-
-    override fun initialize() {
 
     }
 
@@ -105,13 +92,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
         } else if (gamepad1.bWasPressed()) {
             launchSpeed -= 0.25
         }
-
+/*
         if (launchSpeed > 1) {
             launchSpeed = 1.0
         }
         if (launchSpeed < 0) {
             launchSpeed = 0.0
         }
+
+ */
 
 
         /*
@@ -123,40 +112,32 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
-        var frontLeftPower = axialMotion + lateralMotion + yawMotion
-        var frontRightPower = axialMotion - lateralMotion - yawMotion
-        var backLeftPower = axialMotion - lateralMotion + yawMotion
-        var backRightPower = axialMotion + lateralMotion - yawMotion
+        val motorPowers = arrayOf(
+            -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
+            -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
+        )
+
+        val max = motorPowers.maxOf { i -> abs(i) }
+
+        motorPowers.forEachIndexed {i, _ -> motorPowers[i] /= max}
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.33333 }
+
+        leftLauncherMotor.power = launchSpeed
+        rightLauncherMotor.power = launchSpeed
 
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
-        max = max(abs(frontLeftPower), abs(frontRightPower))
-        max = max(max, abs(backLeftPower))
-        max = max(max, abs(backRightPower))
 
-
-        // power greater then 1 going to motors is bad; this stops it
-        if (max > 1.0) {
-            frontLeftPower /= max
-            frontRightPower /= max
-            backLeftPower /= max
-            backRightPower /= max
-        }
-
-        leftFrontMotor.power = frontLeftPower
-       rightFrontMotor.power = frontRightPower
-
-       leftRearMotor.power = backLeftPower
-        rightRearMotor.power = backRightPower
-        rightLauncherMotor.power = launchSpeed
-        leftLauncherMotor.power = launchSpeed
+        
 
 
 
         /*
         telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontMotor , frontRightPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
         */
         telemetry.addData("left encoder value: ", leftLauncherMotor.currentPosition)
