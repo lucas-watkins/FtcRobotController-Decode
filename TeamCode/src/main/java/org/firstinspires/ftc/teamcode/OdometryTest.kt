@@ -21,28 +21,29 @@ class OdometryTest : BaseOpMode() {
     }
 
     override fun loop() {
+        odometry.update()
         uploadOdometryDebug()
 
         val turnPower = gamepad1.right_trigger - gamepad1.left_trigger
 
         val motorPowers = arrayOf(
-            gamepad1.left_stick_y + gamepad1.left_stick_x + turnPower,
+            -gamepad1.left_stick_y + gamepad1.left_stick_x + turnPower,
             -gamepad1.left_stick_y - gamepad1.left_stick_x - turnPower,
-            gamepad1.left_stick_y - gamepad1.left_stick_x + turnPower,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x + turnPower,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - turnPower,
         )
 
-        val max = motorPowers.maxBy(::abs)
+        val max = motorPowers.maxOf { i -> abs(i) }
 
         motorPowers.forEachIndexed {i, _ -> motorPowers[i] /= max}
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.33333 }
     }
 
     private fun uploadOdometryDebug() {
-        telemetry.addLine("Odometry (mm):")
+        telemetry.addLine("Odometry (cm):")
 
-        telemetry.addLine("(${odometry.getPosX(DistanceUnit.MM).roundToInt()}, " +
-                "${odometry.getPosY(DistanceUnit.MM).roundToInt()})")
+        telemetry.addLine("(${odometry.getPosX(DistanceUnit.CM).roundToInt()}, " +
+                "${odometry.getPosY(DistanceUnit.CM).roundToInt()})")
 
         telemetry.update()
     }
