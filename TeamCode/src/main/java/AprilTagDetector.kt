@@ -47,17 +47,9 @@ class AprilTagDetector(webcam: CameraName, private val debugMode: Boolean) {
     }
 
     fun getPattern() : ArrayList<Pattern> {
-        if (!debugMode) {
-            visionPortal.setProcessorEnabled(processor, true)
-            Thread.sleep(100)
-        }
-
         var result = ArrayList<Pattern>()
 
-        val detections = processor.detections
-
-        if (!debugMode) visionPortal.setProcessorEnabled(processor, false)
-
+        val detections = getTags()
         if (detections.isEmpty()) throw Exception("No AprilTags detected")
 
         for (detection in detections) {
