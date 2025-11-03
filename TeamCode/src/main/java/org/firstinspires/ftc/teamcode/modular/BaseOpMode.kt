@@ -18,6 +18,8 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
 
+
+
     // Don't override this function, override initialize instead
     override fun init() {
         try {
@@ -31,10 +33,25 @@ abstract class BaseOpMode : OpMode() {
 
             //stops and resets then set to run at the start of every op mode
             // this is needed as otherwise the encoder values will be false
+
+
+            rightLauncherMotor.direction = DcMotorSimple.Direction.FORWARD
+
+            leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
+
+
             leftLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             rightLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             leftLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             rightLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+
+
+
+            // end of untested
+
+
+
 
             driveTrain.forEachIndexed {i, m ->
                 if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }

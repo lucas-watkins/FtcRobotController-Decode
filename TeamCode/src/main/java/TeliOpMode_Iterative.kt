@@ -21,10 +21,13 @@ import kotlin.math.max
 * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
 * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
 */
+
+
 @TeleOp(name = "Teliop kotlin", group = "Iterative OpMode")
 //@Disabled
 class TeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
+
 
     // Declare OpMode members.
     // TODO stop using getter and setter methods
@@ -36,6 +39,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
+
+
 
 
 
@@ -57,6 +62,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.update()
 
         runtime.reset()
+
+         /*
+
+
+          */
 
     }
 
@@ -88,19 +98,14 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         if (gamepad1.aWasPressed()) {
-            launchSpeed += 0.25
+            launchSpeed += 10
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= 0.25
-        }
-/*
-        if (launchSpeed > 1) {
-            launchSpeed = 1.0
-        }
-        if (launchSpeed < 0) {
-            launchSpeed = 0.0
+            launchSpeed -= 10
         }
 
- */
+
+
+
 
 
         /*
@@ -124,12 +129,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
         motorPowers.forEachIndexed {i, _ -> motorPowers[i] /= max}
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.33333 }
 
-        leftLauncherMotor.power = launchSpeed
-        rightLauncherMotor.power = launchSpeed
+        leftLauncherMotor.velocity = launchSpeed
+        rightLauncherMotor.velocity = launchSpeed
 
 
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
+
 
         
 
@@ -144,6 +148,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("right encoder value: ", rightLauncherMotor.currentPosition)
         telemetry.addData("launchSpeed: ", launchSpeed.toString())
         telemetry.update()
+
     }
 
     /*
