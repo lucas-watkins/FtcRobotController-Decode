@@ -46,17 +46,17 @@ class AprilTagDetector(webcam: CameraName, private val debugMode: Boolean) {
         return detections
     }
 
-    fun getPattern() : Array<Pattern> {
-        var result = emptyArray<Pattern>()
+    fun getPattern() : ArrayList<Pattern> {
+        val result = ArrayList<Pattern>()
 
         val detections = getTags()
         if (detections.isEmpty()) throw Exception("No AprilTags detected")
 
         for (detection in detections) {
-            result += when (detection.id) {
-                21 -> Pattern.GPP
-                22 -> Pattern.PGP
-                23 -> Pattern.PPG
+            when (detection.id) {
+                21 -> result.add(Pattern.GPP)
+                22 -> result.add(Pattern.PGP)
+                23 -> result.add(Pattern.PPG)
                 else -> continue
             }
         }
