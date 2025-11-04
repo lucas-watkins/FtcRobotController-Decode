@@ -23,6 +23,8 @@ class AprilTagDetectionTest : LinearOpMode() {
 
                 telemetry.update()
             }
+
+            sleep(20) // share the cpu
         }
     }
 }
