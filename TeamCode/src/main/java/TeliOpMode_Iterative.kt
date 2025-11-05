@@ -39,6 +39,18 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
+    // in this could be faster but their is no reason to make it faster
+    // in the configuration of the robot as of nov 4 2700 is if anything too powerful
+    // the absolute max is 2770 this could cause issues with power getting to the motor
+
+    // switch to radians
+    private var maxLaunchSpeed= 2700
+    private var minLaunchSpeed = 100
+    //TODO add to drive train
+    private var slowInput = false
+    private var avgVelocity = 0.0
+
+
 
 
 
@@ -54,7 +66,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        // TODO rename to base opmode.
 
 
         // Wait for the game to start (driver presses START)
@@ -69,6 +80,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
           */
 
     }
+
 
     /*
      * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
@@ -87,9 +99,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     override fun loop() {
+        avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity) / 2
 
 
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
 
         // TODO get controls
         axialMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
@@ -98,10 +110,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         if (gamepad1.aWasPressed()) {
-            launchSpeed += 10
+            launchSpeed += 100
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= 10
+            launchSpeed -= 100
         }
+
 
 
 
@@ -144,9 +157,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontMotor , frontRightPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
         */
-        telemetry.addData("left encoder value: ", leftLauncherMotor.currentPosition)
-        telemetry.addData("right encoder value: ", rightLauncherMotor.currentPosition)
-        telemetry.addData("launchSpeed: ", launchSpeed.toString())
+
+        telemetry.addData("launchSpeedSet: ", launchSpeed)
+        telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
+        telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
+        telemetry.addData(" avg speed: ", avgVelocity)
         telemetry.update()
 
     }

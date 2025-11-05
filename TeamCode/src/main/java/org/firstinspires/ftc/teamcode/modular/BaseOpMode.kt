@@ -36,7 +36,6 @@ abstract class BaseOpMode : OpMode() {
 
 
             rightLauncherMotor.direction = DcMotorSimple.Direction.FORWARD
-
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
 
 
