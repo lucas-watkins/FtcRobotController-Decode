@@ -20,7 +20,7 @@ class AutonomousTest : BaseOpMode() {
     private lateinit var odometry: GoBildaPinpointDriver
     private lateinit var mover: AutoMover
     private lateinit var plan: AutoStageExecutor
-    val power = 4.0
+    val power = 0.333
     var pose = Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
     var isOpModeActive = true
 
@@ -30,8 +30,6 @@ class AutonomousTest : BaseOpMode() {
         odometry.setEncoderResolution(GoBildaOdometryPods.goBILDA_SWINGARM_POD)
         odometry.setEncoderDirections(EncoderDirection.REVERSED, EncoderDirection.FORWARD)
         odometry.resetPosAndIMU()
-
-        //driveTrain.forEach {m -> m.mode = RunMode.RUN_USING_ENCODER}
 
         mover = AutoMover(driveTrain)
 
@@ -47,7 +45,7 @@ class AutonomousTest : BaseOpMode() {
             ),
 
             Stage(
-                { pose.y > -1 },
+                { pose.y > -0.9 },
                 { if (mover.direction != Direction.BACKWARD) mover.goBackward(power) }
             ),
 
