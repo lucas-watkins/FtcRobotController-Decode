@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.modular
 
-class AutoFlightPlan(val plan: Array<Stage>) {
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
+
+class AutoStageExecutor(val plan: Array<Stage>, private val odometry: GoBildaPinpointDriver) {
     data class Stage(val condition: () -> Boolean, val exec: () -> Unit)
 
     private var currentStage = 0
@@ -16,16 +18,13 @@ class AutoFlightPlan(val plan: Array<Stage>) {
             stage.exec()
             return true
         } else {
+            odometry.resetPosAndIMU()
             if (currentStage + 1 <= plan.lastIndex) {
                 currentStage++
+                return true
             }
 
-            if (currentStage == plan.lastIndex) {
-                return false
-            }
+            return false
         }
-
-        return true // never supposed to reach here
     }
-
 }
