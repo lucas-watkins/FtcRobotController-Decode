@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import kotlin.math.abs
 import kotlin.math.max
@@ -39,19 +41,19 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
+
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute max is 2770 this could cause issues with power getting to the motor
 
-    // switch to radians
-    private var maxLaunchSpeed= 2700
-    private var minLaunchSpeed = 100
+    //
+
+    private var maxLaunchSpeed=  6000 * (Math.PI/14)
+    private var minLaunchSpeed = 200 * (Math.PI/14)
     //TODO add to drive train
     private var slowInput = false
-    private var avgVelocity = 0.0
 
-
-
+    private var avgVelocity = 0.0 // radians
 
 
 
@@ -59,6 +61,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
     /*
      * Code to run ONCE when the driver hits INIT
      */
+
 
 
      override fun initialize() {
@@ -99,7 +102,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     override fun loop() {
-        avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity) / 2
 
 
 
@@ -110,15 +112,10 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         if (gamepad1.aWasPressed()) {
-            launchSpeed += 100
+            launchSpeed += 1400 * (Math.PI/14)
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= 100
+            launchSpeed -= 1400 * (Math.PI/14)
         }
-
-
-
-
-
 
 
         /*
@@ -145,10 +142,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
         leftLauncherMotor.velocity = launchSpeed
         rightLauncherMotor.velocity = launchSpeed
 
+        avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity / 2)
 
 
 
-        
+
+
+
 
 
 
@@ -162,6 +162,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
         telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
         telemetry.addData(" avg speed: ", avgVelocity)
+
         telemetry.update()
 
     }
