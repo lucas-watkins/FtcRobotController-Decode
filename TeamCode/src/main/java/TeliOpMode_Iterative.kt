@@ -95,9 +95,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         if (gamepad1.aWasPressed()) {
-            launchSpeed += 10.0 * Math.PI
+            launchSpeed += 1.0/5.0 * Math.PI
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= 10.0 * Math.PI
+            launchSpeed -= 1.0/5.0 * Math.PI
         }
 
         if(launchSpeed > maxLaunchSpeed){
@@ -135,7 +135,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         leftLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
         */
-        avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity / 2)
+        avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
 
 
 
