@@ -15,6 +15,8 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var rightRearMotor: DcMotorEx
     protected lateinit var driveTrain: Array<DcMotorEx>
 
+    protected  lateinit var launcherMotors: Array<DcMotorEx>
+
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
 
@@ -30,6 +32,7 @@ abstract class BaseOpMode : OpMode() {
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
+            launcherMotors = arrayOf(rightLauncherMotor, leftLauncherMotor)
 
             //stops and resets then set to run at the start of every op mode
             // this is needed as otherwise the encoder values will be false
@@ -39,10 +42,19 @@ abstract class BaseOpMode : OpMode() {
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
 
 
+            /*
             leftLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             rightLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             leftLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             rightLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            */
+
+
+            for( m in launcherMotors){
+                m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                m.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            }
+
 
 
 

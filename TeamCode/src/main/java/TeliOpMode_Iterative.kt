@@ -45,23 +45,12 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute max is 2770 this could cause issues with power getting to the motor
 
-    //
-
-    private var maxLaunchSpeed=  6000 * (Math.PI/14)
-    private var minLaunchSpeed = 200 * (Math.PI/14)
+    private var maxLaunchSpeed=  414.0 * Math.PI //5796 ticks
     //TODO add to drive train
-    private var slowInput = false
-
     private var avgVelocity = 0.0 // radians
-
-
-
-
     /*
      * Code to run ONCE when the driver hits INIT
      */
-
-
 
      override fun initialize() {
         telemetry.addData("Status", "Initialized")
@@ -75,11 +64,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.update()
 
         runtime.reset()
-
-         /*
-
-
-          */
 
     }
 
@@ -111,10 +95,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         if (gamepad1.aWasPressed()) {
-            launchSpeed +=(Math.PI/14)
+            launchSpeed += 10.0 * Math.PI
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= (Math.PI/14)
+            launchSpeed -= 10.0 * Math.PI
         }
+
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
         }
@@ -143,9 +128,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
         motorPowers.forEachIndexed {i, _ -> motorPowers[i] /= max}
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.33333 }
 
+        for(m in launcherMotors){
+            m.setVelocity(launchSpeed, AngleUnit.RADIANS)
+        }
+        /*
         leftLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
-
+        */
         avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity / 2)
 
 
