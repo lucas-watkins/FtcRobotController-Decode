@@ -30,7 +30,6 @@ import kotlin.math.max
 class TeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
 
-
     // Declare OpMode members.
     // TODO stop using getter and setter methods
     // use
