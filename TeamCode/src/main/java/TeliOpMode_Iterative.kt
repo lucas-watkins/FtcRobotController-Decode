@@ -115,6 +115,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
         } else if (gamepad1.bWasPressed()) {
             launchSpeed -= (Math.PI/14)
         }
+        if(launchSpeed > maxLaunchSpeed){
+            launchSpeed = maxLaunchSpeed
+        }
+
+
 
 
         /*
