@@ -30,7 +30,7 @@ abstract class BaseOpMode : OpMode() {
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
 
             driveTrain.forEachIndexed {i, m ->
-                if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }
+                if (i != 1 && i != 3) { m.direction = DcMotorSimple.Direction.REVERSE }
                 m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             }
 

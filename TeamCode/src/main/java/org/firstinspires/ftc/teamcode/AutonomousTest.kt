@@ -33,6 +33,8 @@ class AutonomousTest : BaseOpMode() {
 
         mover = AutoMover(driveTrain)
 
+        driveTrain.forEach { m -> m.mode = RunMode.RUN_USING_ENCODER }
+
         plan = AutoStageExecutor(arrayOf(
             Stage(
                 {  pose.y < 1 },

@@ -15,7 +15,7 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
         const val LEFT_FRONT_OFFSET = 0.0
         const val RIGHT_FRONT_OFFSET = 0.0
         const val LEFT_REAR_OFFSET = 0.0
-        const val RIGHT_REAR_OFFSET = 0.0927152
+        const val RIGHT_REAR_OFFSET = 0.0
         val offsets = arrayOf(LEFT_FRONT_OFFSET, RIGHT_FRONT_OFFSET, LEFT_REAR_OFFSET, RIGHT_REAR_OFFSET)
     }
 
@@ -37,7 +37,7 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
         assert(driveTrain.size == 4) { "the driveTrain must have 4 motors" }
     }
 
-    inline fun powerByParts(power: Double, intervals: Int = 2, func: forEachIndexedPowerType) {
+    /*inline fun powerByParts(power: Double, intervals: Int = 2, func: forEachIndexedPowerType) {
         var p = power / intervals
         var interval = 0
         assert(intervals % 2 == 0) { "interval must be even" }
@@ -50,12 +50,12 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
             interval++
             p += power / intervals
         }
-    }
+    }*/
 
     fun goForward(power: Double) {
         direction = if (power < 0) Direction.BACKWARD else Direction.FORWARD
         driveTrain.forEach { m -> m.power = 0.0 }
-        powerByParts(power) { i, p -> p * (1.0 + offsets[i]) }
+        driveTrain.forEachIndexed { i, m -> m.power = power * (1.0 + offsets[i]) }
     }
 
     fun goBackward(power: Double) {
@@ -65,7 +65,7 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
     fun goLeft(power: Double) {
         direction = if (power < 0) Direction.RIGHT else Direction.LEFT
         driveTrain.forEach { m -> m.power = 0.0 }
-        powerByParts(power) { i, p -> (if ( i % 3 == 0 ) -p else p) * (1.0 + offsets[i]) }
+        driveTrain.forEachIndexed { i, m -> m.power = (if ( i % 3 == 0 ) -power else power) * (1.0 + offsets[i]) }
     }
 
     fun goRight(power: Double) {
@@ -75,7 +75,7 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
     fun goDiagonalLeftForward(power: Double) {
         direction = if (power < 0) Direction.DIAGONAL_LEFT_BACKWARD else Direction.DIAGONAL_LEFT_FORWARD
         driveTrain.forEach { m -> m.power = 0.0 }
-        powerByParts(power) { i, p -> if ( i == 1 || i == 2) p * (1.0 + offsets[i]) else 0.0 }
+        driveTrain.forEachIndexed { i, m -> m.power = if ( i == 1 || i == 2) power * (1.0 + offsets[i]) else 0.0 }
     }
 
     fun goDiagonalLeftBackward(power: Double) {
@@ -85,7 +85,7 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
     fun goDiagonalRightForward(power: Double) {
         direction = if (power < 0) Direction.DIAGONAL_RIGHT_BACKWARD else Direction.DIAGONAL_RIGHT_FORWARD
         driveTrain.forEach { m -> m.power = 0.0 }
-        powerByParts(power) { i, p -> if ( i == 0 || i == 3 ) p * (1.0 + offsets[i]) else 0.0 }
+        driveTrain.forEachIndexed { i, m -> m.power = if ( i == 0 || i == 3 ) power * (1.0 + offsets[i]) else 0.0 }
     }
 
     fun goDiagonalRightBackward(power: Double) {
@@ -94,7 +94,7 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
 
     fun rotateRight(power: Double) {
         direction = if (power < 0) Direction.ROTATE_LEFT else Direction.ROTATE_RIGHT
-        powerByParts(power) { i, p -> p * (1.0 + offsets[i]) * if ( i % 2 == 0 ) 1.0 else -1.0 }
+        driveTrain.forEachIndexed { i, m -> m.power = power * (1.0 + offsets[i]) * if ( i % 2 == 0 ) 1.0 else -1.0 }
     }
 
     fun rotateLeft(power: Double) {
