@@ -37,9 +37,16 @@ abstract class BaseOpMode : OpMode() {
             //stops and resets then set to run at the start of every op mode
             // this is needed as otherwise the encoder values will be false
 
+            leftFrontMotor.direction = DcMotorSimple.Direction.FORWARD
+            leftRearMotor.direction = DcMotorSimple.Direction.FORWARD
+            rightFrontMotor.direction = DcMotorSimple.Direction.REVERSE
+            rightRearMotor.direction = DcMotorSimple.Direction.REVERSE
+
 
             rightLauncherMotor.direction = DcMotorSimple.Direction.FORWARD
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
+
+
 
 
             /*

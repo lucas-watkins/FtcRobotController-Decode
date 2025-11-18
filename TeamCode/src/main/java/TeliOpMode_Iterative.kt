@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
@@ -41,9 +39,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
 
+    private var maxPower = 0.0
+
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
-    // the absolute max is 2770 this could cause issues with power getting to the motor
+    // the absolute maxPoweris 2770 this could cause issues with power getting to the motor
 
     private var maxLaunchSpeed=  414.0 * Math.PI //5796 ticks
     //TODO add to drive train
@@ -95,9 +95,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         if (gamepad1.aWasPressed()) {
-            launchSpeed += 1.0/5.0 * Math.PI
+            launchSpeed += (1.0/5.0) * Math.PI
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= 1.0/5.0 * Math.PI
+            launchSpeed -= (1.0/5.0 )* Math.PI
         }
 
         if(launchSpeed > maxLaunchSpeed){
@@ -116,6 +116,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
+
+
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
@@ -123,10 +125,20 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
 
-        val max = motorPowers.maxOf { i -> abs(i) }
 
-        motorPowers.forEachIndexed {i, _ -> motorPowers[i] /= max}
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.33333 }
+
+        //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
+
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+
+        // the values may be grater then one but the method will round down to one
+        // the controls for the may not be smooth but this is fine for now
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i]}
+
+
+
 
         for(m in launcherMotors){
             m.setVelocity(launchSpeed, AngleUnit.RADIANS)
