@@ -94,15 +94,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         yawMotion = gamepad1.right_stick_x.toDouble()
 
 
-        if (gamepad1.aWasPressed()) {
-            launchSpeed += (1.0/5.0) * Math.PI
-        } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= (1.0/5.0 )* Math.PI
-        }
 
-        if(launchSpeed > maxLaunchSpeed){
-            launchSpeed = maxLaunchSpeed
-        }
 
 
 
@@ -135,18 +127,26 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // the values may be grater then one but the method will round down to one
         // the controls for the may not be smooth but this is fine for now
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i]}
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.5}
 
+        if (gamepad1.aWasPressed()) {
+            launchSpeed += (1.0/5.0) * Math.PI
+        } else if (gamepad1.bWasPressed()) {
+            launchSpeed -= (1.0/5.0 )* Math.PI
+        }
 
+        if(launchSpeed > maxLaunchSpeed){
+            launchSpeed = maxLaunchSpeed
+        }
 
 
         for(m in launcherMotors){
             m.setVelocity(launchSpeed, AngleUnit.RADIANS)
         }
-        /*
+
         leftLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
-        */
+
         avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
 
 

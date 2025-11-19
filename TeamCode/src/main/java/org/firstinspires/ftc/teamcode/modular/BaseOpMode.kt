@@ -37,10 +37,10 @@ abstract class BaseOpMode : OpMode() {
             //stops and resets then set to run at the start of every op mode
             // this is needed as otherwise the encoder values will be false
 
-            leftFrontMotor.direction = DcMotorSimple.Direction.FORWARD
-            leftRearMotor.direction = DcMotorSimple.Direction.FORWARD
-            rightFrontMotor.direction = DcMotorSimple.Direction.REVERSE
-            rightRearMotor.direction = DcMotorSimple.Direction.REVERSE
+            leftFrontMotor.direction = DcMotorSimple.Direction.REVERSE
+            leftRearMotor.direction = DcMotorSimple.Direction.REVERSE
+            rightFrontMotor.direction = DcMotorSimple.Direction.FORWARD
+            rightRearMotor.direction = DcMotorSimple.Direction.FORWARD
 
 
             rightLauncherMotor.direction = DcMotorSimple.Direction.FORWARD
@@ -72,8 +72,8 @@ abstract class BaseOpMode : OpMode() {
 
 
             driveTrain.forEachIndexed {i, m ->
-                if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }
-                m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+                //if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }
+               // m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
                 m.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             }
 
