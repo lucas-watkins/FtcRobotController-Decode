@@ -6,60 +6,68 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
-import org.firstinspires.ftc.teamcode.modular.AutoMover
-import org.firstinspires.ftc.teamcode.modular.AutoMover.Direction
 import org.firstinspires.ftc.teamcode.modular.Units
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.GoBildaOdometryPods
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.modular.Vector2
+import kotlin.math.abs
+
 
 @Autonomous(name = "AutonomousTest", group = "OpMode")
 class AutonomousTest : BaseOpMode() {
     private lateinit var odometry: GoBildaPinpointDriver
-    private lateinit var mover: AutoMover
     private lateinit var plan: AutoStageExecutor
-    val power = 0.333
+    val velocity = 800.0
     var pose = Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
+    val directionVector = Vector2(0.0, 0.0)
     var isOpModeActive = true
 
     override fun initialize() {
         odometry = hardwareMap.get(GoBildaPinpointDriver::class.java, "goBildaPinpoint")
-        odometry.setOffsets(0.0, 20.0, DistanceUnit.CM)
+        odometry.setOffsets(6.0, -9.5, DistanceUnit.CM)
         odometry.setEncoderResolution(GoBildaOdometryPods.goBILDA_SWINGARM_POD)
         odometry.setEncoderDirections(EncoderDirection.REVERSED, EncoderDirection.FORWARD)
         odometry.resetPosAndIMU()
-
-        mover = AutoMover(driveTrain)
 
         driveTrain.forEach { m -> m.mode = RunMode.RUN_USING_ENCODER }
 
         plan = AutoStageExecutor(arrayOf(
             Stage(
                 {  pose.y < 1 },
-                { if (mover.direction != Direction.FORWARD) mover.goForward(power) }
+                { directionVector.y = 1.0 }
             ),
 
             Stage(
                 { pose.x < 1 },
-                { if (mover.direction != Direction.RIGHT) mover.goRight(power) }
+                {
+                    directionVector.x = 1.0
+                    directionVector.y = 0.0
+                }
             ),
 
             Stage(
-                { pose.y > -0.9 },
-                { if (mover.direction != Direction.BACKWARD) mover.goBackward(power) }
+                { pose.y > 0 },
+                {
+                    directionVector.x = 0.0
+                    directionVector.y = -1.0
+                }
             ),
 
             Stage(
-                { pose.x > -1 },
-                { if (mover.direction != Direction.LEFT) mover.goLeft(power) }
+                { pose.x > 0 },
+                {
+                    directionVector.x = -1.0
+                    directionVector.y = 0.0
+                }
             )
-        ), odometry)
+        ))
     }
 
     override fun loop() {
-        telemetry.addLine("Direction: ${mover.direction.name}")
+        telemetry.addLine("Direction: $directionVector")
         telemetry.addLine("Stage Number: ${plan.getStageNumber()}")
         telemetry.addLine("Angle: ${pose.angle}")
         telemetry.addLine("Odometry (tile): \n" +
@@ -70,25 +78,29 @@ class AutonomousTest : BaseOpMode() {
         odometry.update()
         pose = odometry.position
 
-        if (!plan.update()) {
-            driveTrain.forEach { m -> m.power = 0.0 }
+        if (isOpModeActive && !plan.update()) {
+            directionVector.x = 0.0
+            directionVector.y = 0.0
             isOpModeActive = false
         }
 
-        // Decay angle adjustment power after 100 ticks
-        driveTrain.forEachIndexed { i, m ->
-            if (m.power > power * (1.0 + AutoMover.offsets[i])) m.power -= ((m.power - power) / 100.0)
-        }
+        updateDriveTrain(directionVector)
+    }
 
-        if (pose.angle < -0.1 && isOpModeActive) {
-            driveTrain[1].power += 0.0005
-            driveTrain[3].power += 0.0008
-        }
+    private fun updateDriveTrain(v: Vector2<Double>) {
+        val turnPower = 0
 
-        if (pose.angle > 0.1 && isOpModeActive) {
-            driveTrain[0].power += 0.0005
-            driveTrain[2].power += 0.0005
-        }
+        val motorPowers = arrayOf(
+            -v.y - v.x + turnPower,
+            -v.y + v.x - turnPower,
+            -v.y + v.x + turnPower,
+            -v.y - v.x - turnPower,
+        )
+
+        val max = motorPowers.maxOf { i -> abs(i) }
+
+        motorPowers.forEachIndexed { i, _ -> motorPowers[i] /= max }
+        driveTrain.forEachIndexed { i, m -> m.velocity = motorPowers[i] * -velocity }
     }
 }
 

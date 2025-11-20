@@ -5,10 +5,10 @@ import kotlin.math.abs
 
 // Abysmal typealias name change later
 typealias forEachIndexedPowerType = (i: Int, p: Double) -> Double
+@Deprecated("Don't use. Use direction vectors instead")
 class AutoMover(val driveTrain: Array<DcMotorEx>) {
 
     var direction = Direction.NONE
-    val reversedDriveTrain = driveTrain.reversed()
 
     // offset calculator: https://www.desmos.com/calculator/gqckl1t3cr
     companion object {
@@ -37,109 +37,94 @@ class AutoMover(val driveTrain: Array<DcMotorEx>) {
         assert(driveTrain.size == 4) { "the driveTrain must have 4 motors" }
     }
 
-    /*inline fun powerByParts(power: Double, intervals: Int = 2, func: forEachIndexedPowerType) {
-        var p = power / intervals
-        var interval = 0
-        assert(intervals % 2 == 0) { "interval must be even" }
-
-        while (abs(p) <= abs(power)) {
-            for (i in driveTrain.indices) {
-                val index = if (interval % 2 == 0) i else (driveTrain.lastIndex - i)
-                driveTrain[index].power = func(index, p)
-            }
-            interval++
-            p += power / intervals
-        }
-    }*/
-
-    fun goForward(power: Double) {
-        direction = if (power < 0) Direction.BACKWARD else Direction.FORWARD
-        driveTrain.forEach { m -> m.power = 0.0 }
-        driveTrain.forEachIndexed { i, m -> m.power = power * (1.0 + offsets[i]) }
+    fun goForward(velocity: Double) {
+        direction = if (velocity < 0) Direction.BACKWARD else Direction.FORWARD
+        driveTrain.forEach { m -> m.velocity = 0.0 }
+        driveTrain.forEachIndexed { i, m -> m.velocity = velocity * (1.0 + offsets[i]) }
     }
 
-    fun goBackward(power: Double) {
-       goForward(-power)
+    fun goBackward(velocity: Double) {
+       goForward(-velocity)
     }
 
-    fun goLeft(power: Double) {
-        direction = if (power < 0) Direction.RIGHT else Direction.LEFT
-        driveTrain.forEach { m -> m.power = 0.0 }
-        driveTrain.forEachIndexed { i, m -> m.power = (if ( i % 3 == 0 ) -power else power) * (1.0 + offsets[i]) }
+    fun goLeft(velocity: Double) {
+        direction = if (velocity < 0) Direction.RIGHT else Direction.LEFT
+        driveTrain.forEach { m -> m.velocity = 0.0 }
+        driveTrain.forEachIndexed { i, m -> m.velocity = (if ( i % 3 == 0 ) -velocity else velocity) * (1.0 + offsets[i]) }
     }
 
-    fun goRight(power: Double) {
-        goLeft(-power)
+    fun goRight(velocity: Double) {
+        goLeft(-velocity)
     }
 
-    fun goDiagonalLeftForward(power: Double) {
-        direction = if (power < 0) Direction.DIAGONAL_LEFT_BACKWARD else Direction.DIAGONAL_LEFT_FORWARD
-        driveTrain.forEach { m -> m.power = 0.0 }
-        driveTrain.forEachIndexed { i, m -> m.power = if ( i == 1 || i == 2) power * (1.0 + offsets[i]) else 0.0 }
+    fun goDiagonalLeftForward(velocity: Double) {
+        direction = if (velocity < 0) Direction.DIAGONAL_LEFT_BACKWARD else Direction.DIAGONAL_LEFT_FORWARD
+        driveTrain.forEach { m -> m.velocity = 0.0 }
+        driveTrain.forEachIndexed { i, m -> m.velocity = if ( i == 1 || i == 2) velocity * (1.0 + offsets[i]) else 0.0 }
     }
 
-    fun goDiagonalLeftBackward(power: Double) {
-        goDiagonalLeftForward(-power)
+    fun goDiagonalLeftBackward(velocity: Double) {
+        goDiagonalLeftForward(-velocity)
     }
 
-    fun goDiagonalRightForward(power: Double) {
-        direction = if (power < 0) Direction.DIAGONAL_RIGHT_BACKWARD else Direction.DIAGONAL_RIGHT_FORWARD
-        driveTrain.forEach { m -> m.power = 0.0 }
-        driveTrain.forEachIndexed { i, m -> m.power = if ( i == 0 || i == 3 ) power * (1.0 + offsets[i]) else 0.0 }
+    fun goDiagonalRightForward(velocity: Double) {
+        direction = if (velocity < 0) Direction.DIAGONAL_RIGHT_BACKWARD else Direction.DIAGONAL_RIGHT_FORWARD
+        driveTrain.forEach { m -> m.velocity = 0.0 }
+        driveTrain.forEachIndexed { i, m -> m.velocity = if ( i == 0 || i == 3 ) velocity * (1.0 + offsets[i]) else 0.0 }
     }
 
-    fun goDiagonalRightBackward(power: Double) {
-        goDiagonalRightForward(-power)
+    fun goDiagonalRightBackward(velocity: Double) {
+        goDiagonalRightForward(-velocity)
     }
 
-    fun rotateRight(power: Double) {
-        direction = if (power < 0) Direction.ROTATE_LEFT else Direction.ROTATE_RIGHT
-        driveTrain.forEachIndexed { i, m -> m.power = power * (1.0 + offsets[i]) * if ( i % 2 == 0 ) 1.0 else -1.0 }
+    fun rotateRight(velocity: Double) {
+        direction = if (velocity < 0) Direction.ROTATE_LEFT else Direction.ROTATE_RIGHT
+        driveTrain.forEachIndexed { i, m -> m.velocity = velocity * (1.0 + offsets[i]) * if ( i % 2 == 0 ) 1.0 else -1.0 }
     }
 
-    fun rotateLeft(power: Double) {
-        rotateRight(-power)
+    fun rotateLeft(velocity: Double) {
+        rotateRight(-velocity)
     }
 
     fun isGoingForward(): Boolean {
-        return driveTrain.all { m -> m.power > 0.0 }
+        return driveTrain.all { m -> m.velocity > 0.0 }
     }
 
     fun isGoingBackward(): Boolean {
-        return driveTrain.all { m -> m.power < 0.0 }
+        return driveTrain.all { m -> m.velocity < 0.0 }
     }
 
     fun isStopped(): Boolean {
-        return driveTrain.all { m -> m.power == 0.0 }
+        return driveTrain.all { m -> m.velocity == 0.0 }
     }
 
     fun isGoingLeft(): Boolean {
-        return driveTrain[0].power < 0.0 && driveTrain[3].power < 0.0 &&
-                driveTrain[1].power > 0.0 && driveTrain[2].power > 0.0
+        return driveTrain[0].velocity < 0.0 && driveTrain[3].velocity < 0.0 &&
+                driveTrain[1].velocity > 0.0 && driveTrain[2].velocity > 0.0
     }
 
     fun isGoingRight(): Boolean {
-        return driveTrain[0].power > 0.0 && driveTrain[3].power > 0.0 &&
-                driveTrain[1].power < 0.0 && driveTrain[2].power < 0.0
+        return driveTrain[0].velocity > 0.0 && driveTrain[3].velocity > 0.0 &&
+                driveTrain[1].velocity < 0.0 && driveTrain[2].velocity < 0.0
     }
 
     fun isGoingDiagonalLeft(): Boolean {
-        return driveTrain[1].power > 0.0 && driveTrain[2].power > 0.0 && driveTrain[0].power == 0.0
-                && driveTrain[3].power == 0.0
+        return driveTrain[1].velocity > 0.0 && driveTrain[2].velocity > 0.0 && driveTrain[0].velocity == 0.0
+                && driveTrain[3].velocity == 0.0
     }
 
     fun isGoingDiagonalRight(): Boolean {
-        return driveTrain[1].power == 0.0 && driveTrain[2].power == 0.0 && driveTrain[0].power > 0.0
-                && driveTrain[3].power > 0.0
+        return driveTrain[1].velocity == 0.0 && driveTrain[2].velocity == 0.0 && driveTrain[0].velocity > 0.0
+                && driveTrain[3].velocity > 0.0
     }
 
     fun isGoingDiagonalLeftBackward(): Boolean {
-        return driveTrain[1].power < 0.0 && driveTrain[2].power < 0.0 && driveTrain[0].power == 0.0
-                && driveTrain[3].power == 0.0
+        return driveTrain[1].velocity < 0.0 && driveTrain[2].velocity < 0.0 && driveTrain[0].velocity == 0.0
+                && driveTrain[3].velocity == 0.0
     }
 
     fun isGoingDiagonalRightBackward(): Boolean {
-        return driveTrain[1].power == 0.0 && driveTrain[2].power == 0.0 && driveTrain[0].power < 0.0
-                && driveTrain[3].power < 0.0
+        return driveTrain[1].velocity == 0.0 && driveTrain[2].velocity == 0.0 && driveTrain[0].velocity < 0.0
+                && driveTrain[3].velocity < 0.0
     }
 }
