@@ -95,12 +95,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
-
-
-
-
-
-
         /*
         if(launchSpeed == 0){
             leftLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -127,16 +121,14 @@ class TeliOpMode_Iterative : BaseOpMode() {
             powerSetting = 0.66
         }
 
-
-
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
         // that being said the robot keeps the desired motion as it is
         // I have commented this out as their is no meaningful difference
-        // and the powers are the same.
+        // for the driver that I know of
         //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
 
-        // the values may be grater then one but the method will round down to one
+        // the values may be grater then one but the setPower method will round down to one
         // the controls for the may not be smooth but this is fine for now
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
 
@@ -146,12 +138,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
             launchSpeed -= (1.0/5.0 )* Math.PI
         }
 
-
-
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
         }
-
 
         for(m in launcherMotors){
             m.setVelocity(launchSpeed, AngleUnit.RADIANS)
@@ -161,12 +150,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
 
         avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
-
-
-
-
-
-
 
 
 
