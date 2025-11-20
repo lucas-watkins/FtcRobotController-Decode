@@ -41,6 +41,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
     private var maxPower = 0.0
 
+    private var powerSetting = 0.25
+
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPoweris 2770 this could cause issues with power getting to the motor
@@ -117,7 +119,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
 
-
+        if( gamepad1.dpad_up){
+            powerSetting = 0.25
+        }else if(gamepad1.dpad_left){
+            powerSetting = 0.5
+        }else if(gamepad1.dpad_down){
+            powerSetting = 0.66
+        }
 
         //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
 
@@ -127,13 +135,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // the values may be grater then one but the method will round down to one
         // the controls for the may not be smooth but this is fine for now
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * 0.5}
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
 
         if (gamepad1.aWasPressed()) {
             launchSpeed += (1.0/5.0) * Math.PI
         } else if (gamepad1.bWasPressed()) {
             launchSpeed -= (1.0/5.0 )* Math.PI
         }
+
+
 
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
@@ -166,7 +176,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("launchSpeedSet: ", launchSpeed)
         telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
         telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
-        telemetry.addData(" avg speed: ", avgVelocity)
+        telemetry.addData("avg speed: ", avgVelocity)
+        telemetry. addData("power setting: ", powerSetting)
 
         telemetry.update()
 
