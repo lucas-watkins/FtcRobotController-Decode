@@ -127,11 +127,14 @@ class TeliOpMode_Iterative : BaseOpMode() {
             powerSetting = 0.66
         }
 
-        //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
 
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
+        // that being said the robot keeps the desired motion as it is
+        // I have commented this out as their is no meaningful difference
+        // and the powers are the same.
+        //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
 
         // the values may be grater then one but the method will round down to one
         // the controls for the may not be smooth but this is fine for now
