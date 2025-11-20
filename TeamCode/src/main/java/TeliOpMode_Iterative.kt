@@ -121,12 +121,20 @@ class TeliOpMode_Iterative : BaseOpMode() {
             powerSetting = 0.66
         }
 
+<<<<<<< HEAD
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
         // that being said the robot keeps the desired motion as it is
         // I have commented this out as their is no meaningful difference
         // for the driver that I know of
         //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
+=======
+        //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
+
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+>>>>>>> parent of d3b677e (removed old java files)
 
         // the values may be grater then one but the setPower method will round down to one
         // the controls for the may not be smooth but this is fine for now
