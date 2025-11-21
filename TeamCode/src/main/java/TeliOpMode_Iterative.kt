@@ -145,6 +145,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
         TODO test this out with hardware people see what speeds work best.
         after you find the speeds the the driver wants put them map them to buttons.
          */
+
+
         if (gamepad1.aWasPressed()) {
             launchSpeed += (1.0/10.0) * Math.PI
         } else if (gamepad1.bWasPressed()) {
@@ -164,11 +166,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
 
-        //TODO add servo to teli-op. Go into the config file on the robot and find the motor name(DO NOT CHANGE THIS)
-        // this is what you will need to add in BaseOpMode.kt. Is an example file in Java android studio will convert it
-        // then their should be info online on how to move the servo, or in the external.samples
-
-
 
         /*
         telemetry.addData("Status", "Run Time: " + runtime.toString());
@@ -180,6 +177,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
         telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgVelocity)
+        // TODO this is output as a irrational number have this be in the form of radians * PI
+        // E.G 0.5π or (1/2)π both work fine
         telemetry. addData("power setting: ", powerSetting)
 
         telemetry.update()
