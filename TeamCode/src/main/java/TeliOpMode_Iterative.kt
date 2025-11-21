@@ -140,10 +140,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // the controls for the may not be smooth but this is fine for now
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
 
+
+        /*
+        TODO test this out with hardware people see what speeds work best.
+        after you find the speeds the the driver wants put them map them to buttons.
+         */
         if (gamepad1.aWasPressed()) {
-            launchSpeed += (1.0/5.0) * Math.PI
+            launchSpeed += (1.0/10.0) * Math.PI
         } else if (gamepad1.bWasPressed()) {
-            launchSpeed -= (1.0/5.0 )* Math.PI
+            launchSpeed -= (1.0/10.0) * Math.PI
         }
 
         if(launchSpeed > maxLaunchSpeed){
@@ -158,6 +163,10 @@ class TeliOpMode_Iterative : BaseOpMode() {
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
 
         avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
+
+        //TODO add servo to teli-op. Go into the config file on the robot and find the motor name(DO NOT CHANGE THIS)
+        // this is what you will need to add in BaseOpMode.kt. Is an example file in Java android studio will convert it
+        // then their should be info online on how to move the servo, or in the external.samples
 
 
 
