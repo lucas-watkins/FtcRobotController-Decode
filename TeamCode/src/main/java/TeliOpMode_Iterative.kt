@@ -29,25 +29,21 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
-    // TODO stop using getter and setter methods
-    // use
 
     private var runtime = ElapsedTime()
-
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
-
+    //TODO implement
     private var maxPower = 0.0
-
     private var powerSetting = 0.25
 
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
-    // the absolute maxPoweris 2770 this could cause issues with power getting to the motor
+    // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed=  414.0 * Math.PI //5796 ticks
+    private var maxLaunchSpeed = 414.0 * Math.PI //5796 ticks
     //TODO add to drive train
     private var avgVelocity = 0.0 // radians
     /*
@@ -59,26 +55,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-
-
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized")
         telemetry.update()
-
         runtime.reset()
 
     }
 
-
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
-     */
-    override fun init_loop() {
-    }
-
-    /*
-     * Code to run ONCE when the driver hits START
-     */
     override fun start() {
         runtime.reset()
     }
@@ -87,9 +70,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     override fun loop() {
-
-
-
         // TODO get controls
         axialMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
@@ -123,10 +103,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        // that being said the robot keeps the desired motion as it is
-        // I have commented this out as their is no meaningful difference
-        // for the driver that I know of
+
         //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
 
         //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
@@ -140,12 +117,10 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // the controls for the may not be smooth but this is fine for now
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
 
-
         /*
         TODO test this out with hardware people see what speeds work best.
         after you find the speeds the the driver wants put them map them to buttons.
          */
-
 
         if (gamepad1.aWasPressed()) {
             launchSpeed += (1.0/10.0) * Math.PI
@@ -166,7 +141,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
 
-
         /*
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontMotor , frontRightPower);
@@ -182,7 +156,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry. addData("power setting: ", powerSetting)
 
         telemetry.update()
-
     }
 
     /*

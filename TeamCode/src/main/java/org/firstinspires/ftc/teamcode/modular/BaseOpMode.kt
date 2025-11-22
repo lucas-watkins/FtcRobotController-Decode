@@ -14,13 +14,9 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftRearMotor: DcMotorEx
     protected lateinit var rightRearMotor: DcMotorEx
     protected lateinit var driveTrain: Array<DcMotorEx>
-
     protected  lateinit var launcherMotors: Array<DcMotorEx>
-
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
-
-
 
     // Don't override this function, override initialize instead
     override fun init() {
@@ -29,6 +25,7 @@ abstract class BaseOpMode : OpMode() {
             rightFrontMotor = hardwareMap["rightFrontMotor"] as DcMotorEx
             leftRearMotor = hardwareMap["leftRearMotor"] as DcMotorEx
             rightRearMotor = hardwareMap["rightRearMotor"] as DcMotorEx
+
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
@@ -47,33 +44,12 @@ abstract class BaseOpMode : OpMode() {
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
 
 
-
-
-            /*
-            leftLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            rightLauncherMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-            leftLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-            rightLauncherMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-            */
-
-
             for( m in launcherMotors){
                 m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
                 m.mode = DcMotor.RunMode.RUN_USING_ENCODER
             }
 
-
-
-
-
-            // end of untested
-
-
-
-
             driveTrain.forEachIndexed {i, m ->
-                //if (i != 1) { m.direction = DcMotorSimple.Direction.REVERSE }
-               // m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
                 m.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
             }
 
