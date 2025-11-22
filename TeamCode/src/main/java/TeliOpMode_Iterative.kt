@@ -4,8 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
-import kotlin.math.abs
-import kotlin.math.max
 
 
 /*
@@ -46,13 +44,14 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var maxLaunchSpeed = 414.0 * Math.PI //5796 ticks
     //TODO add to drive train
     private var avgVelocity = 0.0 // radians
+
+    private var maxDriveMotorPower = 0.0
     /*
      * Code to run ONCE when the driver hits INIT
      */
 
      override fun initialize() {
         telemetry.addData("Status", "Initialized")
-
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         // Wait for the game to start (driver presses START)
@@ -104,17 +103,18 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // Normalize the values so no wheel power exceeds 100%
 
-        //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
+        for(p in motorPowers){
+            if (p > maxDriveMotorPower){
+                maxDriveMotorPower = p
+            }
+        }
+        // power setting will come after
 
-        //motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxPower}
+        // the motors should not be normalised to unless a index of motorPower is grater then one
+        if(maxDriveMotorPower > 1){
+            motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxDriveMotorPower}
+        }
 
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-
-
-        // the values may be grater then one but the setPower method will round down to one
-        // the controls for the may not be smooth but this is fine for now
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
 
         /*
