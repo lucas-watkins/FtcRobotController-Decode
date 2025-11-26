@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Servo
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -17,6 +18,7 @@ abstract class BaseOpMode : OpMode() {
 
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
+    protected lateinit var servoLauncher: Servo
 
     // Don't override this function, override initialize instead
     override fun init() {
@@ -27,6 +29,7 @@ abstract class BaseOpMode : OpMode() {
             rightRearMotor = hardwareMap["rightRearMotor"] as DcMotorEx
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
+            servoLauncher = hardwareMap["servoLauncher"] as Servo
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
 
             driveTrain.forEachIndexed {i, m ->
