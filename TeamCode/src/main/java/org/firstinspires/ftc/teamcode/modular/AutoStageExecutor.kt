@@ -12,6 +12,10 @@ class AutoStageExecutor(vararg val plan: Stage) {
     }
 
     fun update(): Boolean {
+        if (plan.isEmpty()) {
+            return false
+        }
+
         val stage = plan[currentStage]
 
         if (stage.condition()) {
