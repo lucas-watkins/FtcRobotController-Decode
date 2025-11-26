@@ -34,40 +34,36 @@ class AutonomousTest : BaseOpMode() {
 
         driveTrain.forEach { m -> m.mode = RunMode.RUN_USING_ENCODER }
 
-        plan = AutoStageExecutor {
-            val p = ArrayList<Stage>()
-
-            p += Stage(
+        plan = AutoStageExecutor (
+            Stage(
                 { pose.y < 1 },
                 { directionVector.y = 1.0 }
-            )
+            ),
 
-            p += Stage(
+            Stage(
                 { pose.x < 1 },
                 {
                     directionVector.x = 1.0
                     directionVector.y = 0.0
                 }
-            )
+            ),
 
-            p += Stage(
+            Stage(
                 { pose.y > 0 },
                 {
                     directionVector.x = 0.0
                     directionVector.y = -1.0
                 }
-            )
+            ),
 
-            p += Stage(
+            Stage(
                 { pose.x > 0 },
                 {
                     directionVector.x = -1.0
                     directionVector.y = 0.0
                 }
             )
-
-            return@AutoStageExecutor p.toTypedArray()
-        }
+        )
     }
 
     override fun loop() {

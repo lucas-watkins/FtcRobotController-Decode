@@ -31,6 +31,7 @@ class AutonomousBasicMiddle : BaseOpMode() {
     private var isOpModeActive = true
     private val servoLaunch = 1.0
     private val servoRetract = 0.7
+    private var ballsLaunched = 0
 
     override fun initialize() {
         odometry = hardwareMap.get(GoBildaPinpointDriver::class.java, "goBildaPinpoint")
@@ -42,62 +43,18 @@ class AutonomousBasicMiddle : BaseOpMode() {
         driveTrain.forEach { m -> m.mode = RunMode.RUN_USING_ENCODER }
         servoLauncher.position = servoRetract
 
-        plan = AutoStageExecutor {
-            val p = ArrayList<Stage>()
-            /*Stage(
-                {  pose.x > -1 && pose.y < 3.889 },
+        plan = AutoStageExecutor (
+            Stage(
+                { pose.y < 3.375 },
                 {
-                    directionVector.x = -1.0
-                    directionVector.y = 3.889
+                    directionVector.x = 0.0
+                    directionVector.y = 3.375
                     turnPower = 0.0
                 }
             ),
 
             Stage(
-                { pose.angle > -1 },
-                {
-                    directionVector.x = 0.0
-                    directionVector.y = 0.0
-                    turnPower = -0.75
-                }
-            ),*/
-
-            // shooting stage here
-
-            p += Stage(
-                { leftLauncherMotor.velocity > -1600 && rightLauncherMotor.velocity < 1600 },
-                {
-                    leftLauncherMotor.velocity = -1600.0
-                    rightLauncherMotor.velocity = 1600.0
-                }
-            )
-
-            for (i in 0..2) {
-                p += Stage(
-                    { servoLauncher.position < servoLaunch },
-                    {
-                        servoLauncher.position = servoLaunch
-                        sleep(500)
-                    }
-                )
-
-                p += Stage(
-                    { servoLauncher.position in servoRetract.nextUp()..<servoLaunch },
-                    {}
-                )
-
-                p += Stage(
-                    { servoLauncher.position > servoRetract + 0.0001 },
-                    {
-                        servoLauncher.position = servoRetract
-                        sleep(500)
-                    }
-                )
-            }
-
-
-            /*Stage(
-                { pose.angle < -0.2 },
+                { pose.angle < 0.65 },
                 {
                     directionVector.x = 0.0
                     directionVector.y = 0.0
@@ -106,16 +63,67 @@ class AutonomousBasicMiddle : BaseOpMode() {
             ),
 
             Stage(
-                { pose.x < -0.5 && pose.y > 1.723 },
+                { leftLauncherMotor.velocity > -2175 && rightLauncherMotor.velocity < 2175 },
                 {
-                    directionVector.x = 0.5
-                    directionVector.y = -2.166
+                    leftLauncherMotor.velocity = -2175.0
+                    rightLauncherMotor.velocity = 2175.0
+
+                    directionVector.x = 0.0
+                    directionVector.y = 0.0
                     turnPower = 0.0
                 }
-            )*/
+            ),
 
-            return@AutoStageExecutor p.toTypedArray()
-        }
+            Stage(
+                { ballsLaunched < 3 },
+                {
+                    directionVector.x = 0.0
+                    directionVector.y = 0.0
+                    turnPower = 0.0
+
+                    if (servoLauncher.position < servoLaunch) {
+                        servoLauncher.position = servoLaunch
+                        ballsLaunched++
+                        sleep(1000)
+                    }
+
+                   if (servoLauncher.position > servoRetract) {
+                       servoLauncher.position = servoRetract
+                       sleep(1000)
+                   }
+               }
+            ),
+
+            Stage(
+                { leftLauncherMotor.velocity < -2174 && rightLauncherMotor.velocity > 2174 },
+                {
+                    leftLauncherMotor.velocity = 0.0
+                    rightLauncherMotor.velocity = 0.0
+
+                    directionVector.x = 0.0
+                    directionVector.y = 0.0
+                    turnPower = 0.0
+                }
+            ),
+
+            Stage(
+                { pose.angle > 0.2 },
+                {
+                    directionVector.x = 0.0
+                    directionVector.y = 0.0
+                    turnPower = -0.75
+                }
+            ),
+
+            Stage(
+                { pose.y > 2.25},
+                {
+                    directionVector.x = 0.0
+                    directionVector.y = -2.25
+                    turnPower = 0.0
+                }
+            )
+        )
     }
 
     override fun loop() {
@@ -127,6 +135,7 @@ class AutonomousBasicMiddle : BaseOpMode() {
                 "y -> ${pose.y}"
         )
         telemetry.addLine("Servo Pos: ${servoLauncher.position}")
+        telemetry.addLine("Balls Launched: $ballsLaunched")
         telemetry.update()
         odometry.update()
         pose = odometry.position
@@ -172,7 +181,3 @@ private val Pose2D.angle: Double
     get() {
         return getHeading(AngleUnit.RADIANS)
     }
-
-private fun isInEpsilon(x: Double, y: Double, epsilon: Double = 0.000001): Boolean {
-    return x in y-epsilon..y+epsilon
-}

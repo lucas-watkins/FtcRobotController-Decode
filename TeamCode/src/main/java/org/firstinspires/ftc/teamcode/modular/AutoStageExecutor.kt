@@ -2,11 +2,10 @@ package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
 
-class AutoStageExecutor(getPlan: () -> Array<Stage>) {
+class AutoStageExecutor(vararg val plan: Stage) {
     data class Stage(val condition: () -> Boolean, val exec: () -> Unit)
 
     private var currentStage = 0
-    private val plan = getPlan()
 
     fun getStageNumber(): Int {
         return currentStage
