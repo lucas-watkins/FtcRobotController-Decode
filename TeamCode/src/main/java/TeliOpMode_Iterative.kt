@@ -22,13 +22,9 @@ import kotlin.math.abs
 */
 
 
-@TeleOp(name = "Teliop kotlin", group = "Iterative OpMode")
+@TeleOp(name = "scrimmage-tell op", group = "Iterative OpMode")
 //@Disabled
 class TeliOpMode_Iterative : BaseOpMode() {
-    // Declare OpMode members.
-
-    // Declare OpMode members.
-
 
     var runtime : ElapsedTime = ElapsedTime()
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
@@ -59,9 +55,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
-
     }
-
     override fun start() {
         runtime.reset()
     }
@@ -74,16 +68,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         axialMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
-
-        /*
-        if(launchSpeed == 0){
-            leftLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        */
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
 
 
         val motorPowers = arrayOf(
@@ -101,9 +85,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
             powerSetting = 0.66
         }
 
-
         // Normalize the values so no wheel power exceeds 100%
-
         for(p in motorPowers){
             if (p > abs(maxDriveMotorPower)){
                 maxDriveMotorPower = abs(p)
@@ -118,10 +100,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
             motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         }
 
-        /*
-        TODO test this out with hardware people see what speeds work best.
-        after you find the speeds the the driver wants put them map them to buttons.
-         */
 
         if (gamepad2.aWasPressed()) {
             launchSpeed += (1.0/20.0) * Math.PI
