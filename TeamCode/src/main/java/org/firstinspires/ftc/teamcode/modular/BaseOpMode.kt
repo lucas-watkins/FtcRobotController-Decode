@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
@@ -52,9 +53,8 @@ abstract class BaseOpMode : OpMode() {
                 m.mode = DcMotor.RunMode.RUN_USING_ENCODER
             }
 
-            driveTrain.forEachIndexed {i, m ->
-                if (i != 1 && i != 3) { m.direction = DcMotorSimple.Direction.REVERSE }
-                m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            driveTrain.forEach {m ->
+                m.mode = RunMode.RUN_WITHOUT_ENCODER
             }
 
             // Custom initialization block
