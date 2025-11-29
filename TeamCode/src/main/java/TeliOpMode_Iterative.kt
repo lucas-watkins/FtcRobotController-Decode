@@ -34,7 +34,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
-    private var launchSpeed: Int = 0
+    private var launchSpeed: Double = 0.0
 
     private var powerSetting = 0.25
 
@@ -42,11 +42,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed: Int = 2500
+    private var maxLaunchSpeed: Double = 2500.0
 
-    private var avgVelocity = 0 // radians
+    private var avgVelocity = 0.0 // radians
 
-    private var maxDriveMotorPower: Int = 2500
+    private var maxDriveMotorPower: Double = 2500.0
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -104,7 +104,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         for(p in motorPowers){
             if (p > abs(maxDriveMotorPower)){
-                maxDriveMotorPower = p.toInt()
+                maxDriveMotorPower = p
             }
         }
         // power setting will come after
@@ -132,7 +132,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         }
 
         if(launchSpeed > maxLaunchSpeed){
-            launchSpeed = maxLaunchSpeed
+            launchSpeed = maxLaunchSpeed.toDouble()
         }
         telemetry.addData("max speed ", maxLaunchSpeed)
         telemetry.addData("speed ", launchSpeed)
@@ -140,7 +140,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         for(m in launcherMotors){
-            m.setVelocity(launchSpeed)
+            m.velocity = launchSpeed.toDouble()
         }
 
         if(gamepad2.yWasPressed()){
@@ -158,10 +158,10 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         }
 
-        leftLauncherMotor.velocity(launchSpeed)
-        rightLauncherMotor.velocity(launchSpeed)
+        leftLauncherMotor.velocity =launchSpeed
+        rightLauncherMotor.velocity = launchSpeed
 
-        avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity / 2)
+        avgVelocity = (leftLauncherMotor.velocity + rightLauncherMotor.velocity / 2.0)
 
 
         telemetry.addData("launchSpeedSet: ", launchSpeed)
