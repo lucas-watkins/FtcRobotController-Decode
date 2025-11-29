@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
+import kotlin.math.abs
 
 
 /*
@@ -105,7 +106,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // Normalize the values so no wheel power exceeds 100%
 
         for(p in motorPowers){
-            if (p > maxDriveMotorPower){
+            if (p > abs(maxDriveMotorPower)){
                 maxDriveMotorPower = p
             }
         }
