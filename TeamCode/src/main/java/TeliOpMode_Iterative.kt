@@ -36,7 +36,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
     //TODO implement
-    private var maxPower = 0.0
     private var powerSetting = 0.25
 
     // in this could be faster but their is no reason to make it faster
