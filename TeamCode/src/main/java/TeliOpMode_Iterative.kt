@@ -35,18 +35,19 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
-
+    //TODO implement
+    private var maxPower = 0.0
     private var powerSetting = 0.25
 
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed = 2500
-
+    private var maxLaunchSpeed = 2.7 * Math.PI //5796 ticks
+    //TODO add to drive train
     private var avgVelocity = 0.0 // radians
 
-    private var maxDriveMotorPower: Double = 2500
+    private var maxDriveMotorPower = 8.5 // 2.7pi
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -70,6 +71,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     override fun loop() {
+        // TODO get controls
         axialMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
@@ -122,7 +124,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         /*
-        .
+        TODO test this out with hardware people see what speeds work best.
         after you find the speeds the the driver wants put them map them to buttons.
          */
 
