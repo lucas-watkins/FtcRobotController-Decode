@@ -107,15 +107,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         for(p in motorPowers){
             if (p > abs(maxDriveMotorPower)){
-                maxDriveMotorPower = p
+                maxDriveMotorPower = abs(p)
             }
         }
-
-
         // power setting will come after
 
         // the motors should not be normalised to unless a index of motorPower is grater then one
-
+        if(maxDriveMotorPower > 1){
+            motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
+        }
 
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
 
@@ -145,6 +145,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         if(gamepad2.yWasPressed()){
             servoLauncher.position = 0.7
         }
+
         if(gamepad2.xWasPressed()){
             runtime.reset()
             while(runtime.seconds() < 1.0) {
