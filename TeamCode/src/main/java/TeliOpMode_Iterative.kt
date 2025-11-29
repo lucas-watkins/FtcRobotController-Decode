@@ -119,19 +119,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
             motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         }
 
-
-
-
-
         /*
         TODO test this out with hardware people see what speeds work best.
         after you find the speeds the the driver wants put them map them to buttons.
          */
 
         if (gamepad2.aWasPressed()) {
-            launchSpeed += (1.0/10.0) * Math.PI
+            launchSpeed += (1.0/20.0) * Math.PI
         } else if (gamepad2.bWasPressed()) {
-            launchSpeed -= (1.0/10.0) * Math.PI
+            launchSpeed -= (1.0/20.0) * Math.PI
         }
 
         if(launchSpeed > maxLaunchSpeed){
