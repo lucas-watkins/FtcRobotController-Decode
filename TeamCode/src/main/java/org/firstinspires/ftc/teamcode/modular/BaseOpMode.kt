@@ -50,7 +50,8 @@ abstract class BaseOpMode : OpMode() {
             }
 
             driveTrain.forEachIndexed {i, m ->
-                m.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                if (i != 1 && i != 3) { m.direction = DcMotorSimple.Direction.REVERSE }
+                m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             }
 
             // Custom initialization block

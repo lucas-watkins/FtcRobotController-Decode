@@ -23,4 +23,10 @@ class UnitsTest {
         assertTrue(isInEpsilon(2.0, Units.convert(1.0, Units.TILE, Units.FT)))
     }
 
+    @Test
+    fun `cm to tile`() {
+        Units.convert(1.0, Units.CM, Units.TILE)
+        assertTrue(isInEpsilon(0.016404199475066, Units.convert(1.0, Units.CM, Units.TILE)))
+    }
+
 }
