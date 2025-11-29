@@ -42,7 +42,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed = 2500 //5796 ticks
+    private var maxLaunchSpeed: Int = 2500
 
     private var avgVelocity = 0 // radians
 
@@ -56,7 +56,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         // Wait for the game to start (driver presses START)
-        telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
 
