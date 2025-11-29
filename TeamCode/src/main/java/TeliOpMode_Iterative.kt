@@ -113,11 +113,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // power setting will come after
 
         // the motors should not be normalised to unless a index of motorPower is grater then one
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
+
         if(maxDriveMotorPower > 1){
             motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         }
 
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
+
+
+
 
         /*
         TODO test this out with hardware people see what speeds work best.
