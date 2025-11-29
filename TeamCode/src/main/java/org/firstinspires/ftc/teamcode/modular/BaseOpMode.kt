@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Servo
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -17,6 +19,7 @@ abstract class BaseOpMode : OpMode() {
     protected  lateinit var launcherMotors: Array<DcMotorEx>
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
+    protected lateinit var servoLauncher: Servo
 
     // Don't override this function, override initialize instead
     override fun init() {
@@ -28,6 +31,7 @@ abstract class BaseOpMode : OpMode() {
 
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
+            servoLauncher = hardwareMap["servoLauncher"] as Servo
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
             launcherMotors = arrayOf(rightLauncherMotor, leftLauncherMotor)
 
@@ -49,9 +53,8 @@ abstract class BaseOpMode : OpMode() {
                 m.mode = DcMotor.RunMode.RUN_USING_ENCODER
             }
 
-            driveTrain.forEachIndexed {i, m ->
-                if (i != 1 && i != 3) { m.direction = DcMotorSimple.Direction.REVERSE }
-                m.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+            driveTrain.forEach {m ->
+                m.mode = RunMode.RUN_WITHOUT_ENCODER
             }
 
             // Custom initialization block

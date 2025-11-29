@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
 
-class AutoStageExecutor(val plan: Array<Stage>) {
+class AutoStageExecutor(vararg val plan: Stage) {
     data class Stage(val condition: () -> Boolean, val exec: () -> Unit)
 
     private var currentStage = 0
@@ -12,6 +12,10 @@ class AutoStageExecutor(val plan: Array<Stage>) {
     }
 
     fun update(): Boolean {
+        if (plan.isEmpty()) {
+            return false
+        }
+
         val stage = plan[currentStage]
 
         if (stage.condition()) {
