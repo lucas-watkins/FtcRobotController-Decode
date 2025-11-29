@@ -42,11 +42,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed = 2.7 * Math.PI //5796 ticks
+    private var maxLaunchSpeed = 2500
 
     private var avgVelocity = 0.0 // radians
 
-    private var maxDriveMotorPower = 8.5 // 2.7pi
+    private var maxDriveMotorPower: Double = 2500
     /*
      * Code to run ONCE when the driver hits INIT
      */
