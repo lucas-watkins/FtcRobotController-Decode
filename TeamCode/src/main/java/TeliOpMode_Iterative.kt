@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
+import kotlin.math.abs
 
 
 /*
@@ -28,7 +29,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
     // Declare OpMode members.
 
-    private var runtime = ElapsedTime()
+
+    var runtime : ElapsedTime = ElapsedTime()
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
@@ -41,11 +43,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed = 414.0 * Math.PI //5796 ticks
+    private var maxLaunchSpeed = 2.7 * Math.PI //5796 ticks
     //TODO add to drive train
     private var avgVelocity = 0.0 // radians
 
-    private var maxDriveMotorPower = 0.0
+    private var maxDriveMotorPower = 8.5 // 2.7pi
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -104,36 +106,59 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // Normalize the values so no wheel power exceeds 100%
 
         for(p in motorPowers){
-            if (p > maxDriveMotorPower){
-                maxDriveMotorPower = p
+            if (p > abs(maxDriveMotorPower)){
+                maxDriveMotorPower = abs(p)
             }
         }
         // power setting will come after
 
         // the motors should not be normalised to unless a index of motorPower is grater then one
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
+
         if(maxDriveMotorPower > 1){
-            motorPowers.forEachIndexed {i, m -> motorPowers[i] /= maxDriveMotorPower}
+            motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         }
 
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * powerSetting}
+
+
+
 
         /*
         TODO test this out with hardware people see what speeds work best.
         after you find the speeds the the driver wants put them map them to buttons.
          */
 
-        if (gamepad1.aWasPressed()) {
+        if (gamepad2.aWasPressed()) {
             launchSpeed += (1.0/10.0) * Math.PI
-        } else if (gamepad1.bWasPressed()) {
+        } else if (gamepad2.bWasPressed()) {
             launchSpeed -= (1.0/10.0) * Math.PI
         }
 
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
         }
+        telemetry.addData("max speed ", maxLaunchSpeed)
+        telemetry.addData("speed ", launchSpeed)
+
+
 
         for(m in launcherMotors){
             m.setVelocity(launchSpeed, AngleUnit.RADIANS)
+        }
+
+        if(gamepad2.yWasPressed()){
+            servoLauncher.position = 0.7
+        }
+
+        if(gamepad2.xWasPressed()){
+            runtime.reset()
+            while(runtime.seconds() < 1.0) {
+                servoLauncher.position = 1.0
+            }
+
+                servoLauncher.position = 0.7
+
+
         }
 
         leftLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
@@ -141,11 +166,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
 
-        /*
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontMotor , frontRightPower);
-        telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-        */
 
         telemetry.addData("launchSpeedSet: ", launchSpeed)
         telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
