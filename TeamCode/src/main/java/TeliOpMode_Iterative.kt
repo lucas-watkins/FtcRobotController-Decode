@@ -168,8 +168,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
         telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgVelocity)
-        // TODO this is output as a irrational number have this be in the form of radians * PI
-        // E.G 0.5π or (1/2)π both work fine
+
         telemetry. addData("power setting: ", powerSetting)
 
         telemetry.update()
