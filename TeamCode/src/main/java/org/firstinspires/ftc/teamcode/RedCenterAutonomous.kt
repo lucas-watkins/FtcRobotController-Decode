@@ -28,9 +28,9 @@ class RedCenterAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { leftLauncherMotor.velocity > -motorLaunchVelocity && rightLauncherMotor.velocity < motorLaunchVelocity },
+            { leftLauncherMotor.velocity < motorLaunchVelocity && rightLauncherMotor.velocity < motorLaunchVelocity },
             {
-                leftLauncherMotor.velocity = -motorLaunchVelocity
+                leftLauncherMotor.velocity = motorLaunchVelocity
                 rightLauncherMotor.velocity = motorLaunchVelocity
 
                 directionVector.x = 0.0
@@ -60,7 +60,7 @@ class RedCenterAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { leftLauncherMotor.velocity < -(motorLaunchVelocity - 1) && rightLauncherMotor.velocity > (motorLaunchVelocity - 1) },
+            { leftLauncherMotor.velocity > (motorLaunchVelocity - 1) && rightLauncherMotor.velocity > (motorLaunchVelocity - 1) },
             {
                 leftLauncherMotor.velocity = 0.0
                 rightLauncherMotor.velocity = 0.0
