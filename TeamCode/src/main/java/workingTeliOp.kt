@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -88,6 +89,9 @@ class workingTeliOp : BaseOpMode() {
         if(gamepad2.dpad_down){
             launchSpeed = nearZoneLaunchSpeed
         }
+        if(gamepad2.yWasPressed()){
+            launchSpeed = 5.1
+        }
         telemetry.addData("yaw power: ", yawMotion)
 
         val motorPowers = arrayOf(
@@ -154,9 +158,7 @@ class workingTeliOp : BaseOpMode() {
             m.setVelocity(launchSpeed, AngleUnit.RADIANS)
         }
 
-        if(gamepad2.yWasPressed()){
-            servoLauncher.position = 0.7
-        }
+
 
         if(gamepad2.xWasPressed()){
             runtime.reset()
@@ -172,12 +174,13 @@ class workingTeliOp : BaseOpMode() {
         leftLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
 
-        avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
-
+       // avgVelocity = ((leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS)) / 2)
 
         telemetry.addData("launchSpeedSet: ", launchSpeed)
-        telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
-        telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
+        telemetry.addData("left launch speed radian: ", leftLauncherMotor.getVelocity(AngleUnit.RADIANS))
+        telemetry.addData("left launch speed radian: ", rightLauncherMotor.getVelocity(AngleUnit.RADIANS))
+        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
+        telemetry.addData("left launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgVelocity)
         // TODO this is output as a irrational number have this be in the form of radians * PI
         // E.G 0.5π or (1/2)π both work fine
