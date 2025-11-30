@@ -28,10 +28,10 @@ class BlueGoalAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { leftLauncherMotor.velocity > -2175 && rightLauncherMotor.velocity < 2175 },
+            { leftLauncherMotor.velocity < motorLaunchVelocity && rightLauncherMotor.velocity < motorLaunchVelocity },
             {
-                leftLauncherMotor.velocity = -2175.0
-                rightLauncherMotor.velocity = 2175.0
+                leftLauncherMotor.velocity = motorLaunchVelocity
+                rightLauncherMotor.velocity = motorLaunchVelocity
 
                 directionVector.x = 0.0
                 directionVector.y = 0.0
@@ -49,18 +49,18 @@ class BlueGoalAutonomous : BaseAutonomous() {
                 if (servoLauncher.position < servoLaunch) {
                     servoLauncher.position = servoLaunch
                     ballsLaunched++
-                    sleep(2000)
+                    sleep(launchBallDelay)
                 }
 
                 if (servoLauncher.position > servoRetract) {
                     servoLauncher.position = servoRetract
-                    sleep(2000)
+                    sleep(rackBallDelay)
                 }
             }
         ),
 
         Stage(
-            { leftLauncherMotor.velocity < -2174 && rightLauncherMotor.velocity > 2174 },
+            { leftLauncherMotor.velocity > (motorLaunchVelocity - 1) && rightLauncherMotor.velocity > (motorLaunchVelocity - 1) },
             {
                 leftLauncherMotor.velocity = 0.0
                 rightLauncherMotor.velocity = 0.0

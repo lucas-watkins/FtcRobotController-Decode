@@ -22,6 +22,9 @@ abstract class BaseAutonomous : BaseOpMode() {
     protected val servoLaunch = 1.0
     protected val servoRetract = 0.7
     protected var ballsLaunched = 0
+    protected val rackBallDelay = 2000L
+    protected val launchBallDelay = 500L
+    protected val motorLaunchVelocity = 2175.0
 
     override fun initialize() {
         odometry = hardwareMap.get(GoBildaPinpointDriver::class.java, "goBildaPinpoint")
