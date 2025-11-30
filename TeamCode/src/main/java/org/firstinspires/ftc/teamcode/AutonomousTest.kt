@@ -9,13 +9,14 @@ import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.Units
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.GoBildaOdometryPods
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.teamcode.modular.Vector2
 import kotlin.math.abs
 
-
+@Disabled
 @Autonomous(name = "AutonomousTest", group = "OpMode")
 class AutonomousTest : BaseOpMode() {
     private lateinit var odometry: GoBildaPinpointDriver
