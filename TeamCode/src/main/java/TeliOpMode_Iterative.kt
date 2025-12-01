@@ -112,7 +112,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         // Normalize the values so no wheel power exceeds 100%
 
         for(p in motorPowers){
-            if (p > abs(maxDriveMotorPower)){
+            if (abs(p) > 1.0){
                 maxDriveMotorPower = abs(p)
             }
         }
