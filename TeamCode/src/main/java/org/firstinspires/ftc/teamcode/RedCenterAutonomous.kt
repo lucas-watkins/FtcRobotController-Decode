@@ -6,24 +6,24 @@ import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
 import java.lang.Thread.sleep
 
-@Autonomous(name = "BlueCenterAutonomous", group = "BlueTeam")
-class BlueCenterAutonomous : BaseAutonomous() {
+@Autonomous(name = "RedCenterAutonomous", group = "RedTeam")
+class RedCenterAutonomous : BaseAutonomous() {
     override val plan = AutoStageExecutor(
         Stage(
-            { pose.y < 3.375 },// magic nubers, put units
+            { pose.y < 3.375 },
             {
-                directionVector.x = 0.0 // units
+                directionVector.x = 0.0
                 directionVector.y = 3.375
                 turnPower = 0.0
             }
         ),
 
         Stage(
-            { pose.angle < 0.65 },
+            { pose.angle > -0.65 },
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0
-                turnPower = 0.75
+                turnPower = -0.75
             }
         ),
 
@@ -33,7 +33,7 @@ class BlueCenterAutonomous : BaseAutonomous() {
                 leftLauncherMotor.velocity = motorLaunchVelocity
                 rightLauncherMotor.velocity = motorLaunchVelocity
 
-                directionVector.x = 0.0 // units
+                directionVector.x = 0.0
                 directionVector.y = 0.0
                 turnPower = 0.0
             }
@@ -72,11 +72,11 @@ class BlueCenterAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { pose.angle > 0.2 },
+            { pose.angle < -0.2 },
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0
-                turnPower = -0.75
+                turnPower = 0.75
             }
         ),
 
