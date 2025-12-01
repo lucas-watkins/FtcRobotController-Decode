@@ -32,7 +32,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
     var runtime : ElapsedTime = ElapsedTime()
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
-    private var lateralMotion = 0.0
+    private var lateralMotion = 0.0 // side to
     private var yawMotion = 0.0
     private var launchSpeed: Double = 0.0
 
@@ -85,10 +85,10 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
         val motorPowers = arrayOf(
-            -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
-            -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
-            -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
-            -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
+            axialMotion + lateralMotion + yawMotion,
+            axialMotion - lateralMotion - yawMotion,
+            axialMotion - lateralMotion + yawMotion,
+            axialMotion + lateralMotion - yawMotion,
         )
 
         if( gamepad1.dpad_up){
