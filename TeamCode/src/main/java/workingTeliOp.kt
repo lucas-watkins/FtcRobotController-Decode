@@ -92,7 +92,7 @@ class workingTeliOp : BaseOpMode() {
         if(gamepad2.yWasPressed()){
             launchSpeed = 5.1
         }
-        telemetry.addData("yaw power: ", yawMotion)
+        //telemetry.addData("yaw power: ", yawMotion)
 
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
@@ -149,8 +149,8 @@ class workingTeliOp : BaseOpMode() {
         if(launchSpeed < 0.0){
             launchSpeed = 0.0
         }
-        telemetry.addData("max speed ", maxLaunchSpeed)
-        telemetry.addData("speed ", launchSpeed)
+        //telemetry.addData("max speed ", maxLaunchSpeed)
+       // telemetry.addData("speed ", launchSpeed)
 
 
 
