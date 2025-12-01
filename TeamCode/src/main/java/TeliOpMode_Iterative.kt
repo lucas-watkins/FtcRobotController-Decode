@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
@@ -22,9 +23,13 @@ import kotlin.math.abs
 */
 
 
-@TeleOp(name = "teli-op testing", group = "Iterative OpMode")
+@TeleOp(name = "war teli-op", group = "Iterative OpMode")
 //@Disabled
 class TeliOpMode_Iterative : BaseOpMode() {
+    // Declare OpMode members.
+
+    // Declare OpMode members.
+
 
     var runtime : ElapsedTime = ElapsedTime()
     private var axialMotion = 0.0 // Note: pushing stick forward gives negative value
@@ -32,30 +37,39 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
     //TODO implement
+
     private var powerSetting = 0.25
 
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     // the absolute maxPowers 2770 this could cause issues with power getting to the motor
 
-    private var maxLaunchSpeed = 2.7 * Math.PI //5796 ticks
+    private var maxLaunchSpeed = 2.6 * Math.PI //5796 ticks
     //TODO add to drive train
     private var avgVelocity = 0.0 // radians
+
+    private var launchSpeedIncrement = (1.0/20.0) * Math.PI
+
+    //zone launch speeds and could need fine toning by the diver!
+    private val nearZoneLaunchSpeed = 1.5 * Math.PI
+
+    private val farZoneLaunchSpeed = 2.1 * Math.PI
 
     private var maxDriveMotorPower = 8.5 // 2.7pi
     /*
      * Code to run ONCE when the driver hits INIT
      */
 
-     override fun initialize() {
+    override fun initialize() {
         telemetry.addData("Status", "Initialized")
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         // Wait for the game to start (driver presses START)
-        telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
+
     }
+
     override fun start() {
         runtime.reset()
     }
@@ -69,6 +83,31 @@ class TeliOpMode_Iterative : BaseOpMode() {
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
+        /*
+        if(launchSpeed == 0){
+            leftLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        */
+
+        // Combine the joystick requests for each axis-motion to determine each wheel's power.
+        // Set up a variable for each drive wheel to save the power level for telemetry.
+        if(gamepad2.left_bumper || gamepad2.dpad_left){
+            yawMotion = 0.5
+        }
+        if(gamepad2.right_bumper || gamepad2.dpad_right){
+            yawMotion = -0.5
+        }
+        if(gamepad2.dpad_up){
+            launchSpeed = farZoneLaunchSpeed
+        }
+        if(gamepad2.dpad_down){
+            launchSpeed = nearZoneLaunchSpeed
+        }
+        if(gamepad2.yWasPressed()){
+            launchSpeed = 5.1
+        }
+        //telemetry.addData("yaw power: ", yawMotion)
 
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
@@ -77,6 +116,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
 
+
+        //todo switch to bumpers
         if( gamepad1.dpad_up){
             powerSetting = 0.25
         }else if(gamepad1.dpad_left){
@@ -85,7 +126,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
             powerSetting = 0.66
         }
 
+
         // Normalize the values so no wheel power exceeds 100%
+
         for(p in motorPowers){
             if (p > abs(maxDriveMotorPower)){
                 maxDriveMotorPower = abs(p)
@@ -101,17 +144,28 @@ class TeliOpMode_Iterative : BaseOpMode() {
         }
 
 
+
+
+
+        /*
+        TODO test this out with hardware people see what speeds work best.
+        after you find the speeds the the driver wants put them map them to buttons.
+         */
+
         if (gamepad2.aWasPressed()) {
-            launchSpeed += (1.0/20.0) * Math.PI
+            launchSpeed += (launchSpeedIncrement) * Math.PI
         } else if (gamepad2.bWasPressed()) {
-            launchSpeed -= (1.0/20.0) * Math.PI
+            launchSpeed -= (launchSpeedIncrement) * Math.PI
         }
 
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
         }
-        telemetry.addData("max speed ", maxLaunchSpeed)
-        telemetry.addData("speed ", launchSpeed)
+        if(launchSpeed < 0.0){
+            launchSpeed = 0.0
+        }
+        //telemetry.addData("max speed ", maxLaunchSpeed)
+        // telemetry.addData("speed ", launchSpeed)
 
 
 
@@ -119,9 +173,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
             m.setVelocity(launchSpeed, AngleUnit.RADIANS)
         }
 
-        if(gamepad2.yWasPressed()){
-            servoLauncher.position = 0.7
-        }
+
 
         if(gamepad2.xWasPressed()){
             runtime.reset()
@@ -129,7 +181,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
                 servoLauncher.position = 1.0
             }
 
-                servoLauncher.position = 0.7
+            servoLauncher.position = 0.7
 
 
         }
@@ -137,12 +189,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
         leftLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
         rightLauncherMotor.setVelocity(launchSpeed, AngleUnit.RADIANS)
 
-        avgVelocity = (leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS) / 2)
-
+        // avgVelocity = ((leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS)) / 2)
 
         telemetry.addData("launchSpeedSet: ", launchSpeed)
-        telemetry.addData("left launch speed: ", leftLauncherMotor.velocity)
-        telemetry.addData("left launch speed: ", rightLauncherMotor.velocity)
+        telemetry.addData("left launch speed radian: ", leftLauncherMotor.getVelocity(AngleUnit.RADIANS))
+        telemetry.addData("left launch speed radian: ", rightLauncherMotor.getVelocity(AngleUnit.RADIANS))
+        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
+        telemetry.addData("left launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgVelocity)
         // TODO this is output as a irrational number have this be in the form of radians * PI
         // E.G 0.5π or (1/2)π both work fine
