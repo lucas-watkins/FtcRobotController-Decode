@@ -31,7 +31,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
 
     var runtime : ElapsedTime = ElapsedTime()
-    private var forwardMotion = 0.0 // -gamepad1.left_stick_y, as pushing stick forward gives negative value
+    private var forwardMotion = 0.0 //  forwardMotion, as pushing stick forward gives negative value
     private var lateralMotion = 0.0 // gamepad1.left_stick_x
     private var yawMotion = 0.0 // gamepad1.right_stick_x
     private var launchSpeed: Int = 0
@@ -46,15 +46,16 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
     private var avgVelocity = 0// ticks
 
-    private val maxDriveMotorPower = 2500
-    private var launchSpeedIncrement = (1.0/20.0) * Math.PI
+
+
+    private var launchSpeedIncrement = 25
 
     //zone launch speeds and could need fine toning by the diver!
-    private val nearZoneLaunchSpeed = 1.5 * Math.PI
+    private val nearZoneLaunchSpeed = 1700
 
-    private val farZoneLaunchSpeed = 2.1 * Math.PI
+    private val farZoneLaunchSpeed = 2300
 
-    private var maxDriveMotorPower = 8.5 // 2.7pi
+    
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -82,17 +83,10 @@ class TeliOpMode_Iterative : BaseOpMode() {
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
-        /*
-        if(launchSpeed == 0){
-            leftLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightLauncherMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-        */
-
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
         if(gamepad2.left_bumper || gamepad2.dpad_left){
-            yawMotion = 0.5
+            yawMotion = 0.5 // half power, slower then you would think
         }
         if(gamepad2.right_bumper || gamepad2.dpad_right){
             yawMotion = -0.5
@@ -103,16 +97,13 @@ class TeliOpMode_Iterative : BaseOpMode() {
         if(gamepad2.dpad_down){
             launchSpeed = nearZoneLaunchSpeed
         }
-        if(gamepad2.yWasPressed()){
-            launchSpeed = 5.1
-        }
-        //telemetry.addData("yaw power: ", yawMotion)
+        
 
         val motorPowers = arrayOf(
-            -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
-            -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
-            -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
-            -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
+             forwardMotion + gamepad1.left_stick_x + yawMotion,
+             forwardMotion - gamepad1.left_stick_x - yawMotion,
+             forwardMotion - gamepad1.left_stick_x + yawMotion,
+             forwardMotion + gamepad1.left_stick_x - yawMotion,
         )
 
 
