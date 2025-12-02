@@ -22,9 +22,9 @@ import kotlin.math.abs
 */
 
 
-@TeleOp(name = "war teli-op", group = "Iterative OpMode")
+@TeleOp(name = "refactor", group = "Iterative OpMode")
 //@Disabled
-class TeliOpMode_Iterative : BaseOpMode() {
+class zTeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
@@ -101,13 +101,14 @@ class TeliOpMode_Iterative : BaseOpMode() {
         )
 
 
-        //todo debug
+        //todo debug index out of bound
         if(gamepad1.right_bumper){
             powerSettingIndex ++
         }
         if(gamepad1.left_bumper){
             powerSettingIndex --
         }
+
         powerSettingIndex %= powerSettings.size
         diverPower = powerSettings[powerSettingIndex]
 
