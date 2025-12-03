@@ -109,7 +109,11 @@ class zTeliOpMode_Iterative : BaseOpMode() {
             powerSettingIndex --
         }
 
+        telemetry.addLine(powerSettingIndex.toString())
         powerSettingIndex %= powerSettings.size
+        telemetry.addLine(powerSettingIndex.toString())
+        powerSettingIndex = abs(powerSettingIndex)
+        telemetry.addLine(powerSettings[powerSettingIndex].toString())
         diverPower = powerSettings[powerSettingIndex]
 
 
