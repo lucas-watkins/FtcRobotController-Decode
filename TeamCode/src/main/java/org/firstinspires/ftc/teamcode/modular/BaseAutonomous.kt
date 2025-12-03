@@ -25,6 +25,8 @@ abstract class BaseAutonomous : BaseOpMode() {
     protected val rackBallDelay = 2000L
     protected val launchBallDelay = 500L
     protected val motorLaunchVelocity = 2175.0
+    protected var hasWaited = false
+    protected var waitPeriod: UInt = 0U
 
     override fun initialize() {
         odometry = hardwareMap.get(GoBildaPinpointDriver::class.java, "goBildaPinpoint")
@@ -37,7 +39,23 @@ abstract class BaseAutonomous : BaseOpMode() {
         servoLauncher.position = servoRetract
     }
 
+    override fun init_loop() {
+        if (gamepad1.leftBumperWasPressed()) {
+            waitPeriod--
+        }
+        if (gamepad1.rightBumperWasPressed()) {
+            waitPeriod++
+        }
+        telemetry.addLine("Current Wait Period: $waitPeriod seconds")
+        telemetry.addLine("(Left and Right Bumper to Adjust)")
+        telemetry.update()
+    }
+
     override fun loop() {
+        if (!hasWaited) {
+            Thread.sleep(waitPeriod.toLong() * 1000)
+            hasWaited = true
+        }
         telemetry.addLine("Direction: $directionVector")
         telemetry.addLine("Stage Number: ${plan.getStageNumber()}")
         telemetry.addLine("Angle: ${pose.angle}")
