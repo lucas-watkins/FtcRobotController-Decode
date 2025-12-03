@@ -115,14 +115,6 @@ class zTeliOpMode_Iterative : BaseOpMode() {
             }
 
 
-        telemetry.addLine(powerSettingIndex.toString())
-        powerSettingIndex %= powerSettings.size
-        telemetry.addLine(powerSettingIndex.toString())
-        powerSettingIndex = abs(powerSettingIndex)
-        telemetry.addLine(powerSettings[powerSettingIndex].toString())
-        diverPower = powerSettings[powerSettingIndex]
-
-
         // Normalize the values so no wheel power exceeds 100%
 
         for(p in motorPowers){
