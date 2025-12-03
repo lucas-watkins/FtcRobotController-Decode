@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
+import kotlinx.coroutines.delay
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import kotlin.math.abs
@@ -102,12 +103,17 @@ class zTeliOpMode_Iterative : BaseOpMode() {
 
 
         //todo debug index out of bound
-        if(gamepad1.right_bumper){
-            powerSettingIndex ++
-        }
-        if(gamepad1.left_bumper){
-            powerSettingIndex --
-        }
+
+            if (gamepad1.right_bumper) {
+                powerSettingIndex++
+                Thread.sleep(250L)
+            }
+
+            if (gamepad1.left_bumper) {
+                powerSettingIndex--
+                Thread.sleep(250L)
+            }
+
 
 
         // Normalize the values so no wheel power exceeds 100%
