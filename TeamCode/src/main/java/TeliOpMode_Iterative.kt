@@ -114,6 +114,10 @@ class zTeliOpMode_Iterative : BaseOpMode() {
                 Thread.sleep(250L)
             }
 
+        powerSettingIndex %= powerSettings.size
+        powerSettingIndex = abs(powerSettingIndex)
+        diverPower = powerSettings[powerSettingIndex]
+
 
 
         // Normalize the values so no wheel power exceeds 100%
