@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import kotlinx.coroutines.delay
@@ -23,9 +24,9 @@ import kotlin.math.abs
 */
 
 
-@TeleOp(name = "refactor", group = "Iterative OpMode")
-//@Disabled
-class zTeliOpMode_Iterative : BaseOpMode() {
+@TeleOp(name = "war teli-op", group = "Iterative OpMode")
+
+class TeliOpMode_Iterative : BaseOpMode() {
     // Declare OpMode members.
 
     // Declare OpMode members.
@@ -177,7 +178,7 @@ class zTeliOpMode_Iterative : BaseOpMode() {
         telemetry.addData("left launch speed radian: ", leftLauncherMotor.getVelocity(AngleUnit.RADIANS))
         telemetry.addData("left launch speed radian: ", rightLauncherMotor.getVelocity(AngleUnit.RADIANS))
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
-        telemetry.addData("left launch speed tick: ", rightLauncherMotor.velocity)
+        telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgLaunchVelocity)
         // TODO this is output as a irrational number have this be in the form of radians * PI
         // E.G 0.5π or (1/2)π both work fine
