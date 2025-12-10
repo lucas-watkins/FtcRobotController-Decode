@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.EncoderDirection
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.GoBildaOdometryPods
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -15,7 +17,7 @@ class OdometryTest : BaseOpMode() {
     override fun initialize() {
         odometry = hardwareMap.get(GoBildaPinpointDriver::class.java, "goBildaPinpoint")
         odometry.setOffsets(0.0, 20.0, DistanceUnit.CM)
-        odometry.setEncoderResolution(37.25135125, DistanceUnit.MM)
+        odometry.setEncoderResolution(GoBildaOdometryPods.goBILDA_SWINGARM_POD)
         odometry.setEncoderDirections(EncoderDirection.FORWARD, EncoderDirection.REVERSED)
         odometry.resetPosAndIMU()
     }
@@ -44,6 +46,8 @@ class OdometryTest : BaseOpMode() {
 
         telemetry.addLine("(${odometry.getPosX(DistanceUnit.CM).roundToInt()}, " +
                 "${odometry.getPosY(DistanceUnit.CM).roundToInt()})")
+
+        telemetry.addLine("Angle Heading (rad): ${odometry.getHeading(AngleUnit.RADIANS)}")
 
         telemetry.update()
     }
