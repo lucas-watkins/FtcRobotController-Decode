@@ -22,16 +22,8 @@ import kotlin.math.abs
 * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
 * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
 */
-
-
 @TeleOp(name = "war teli-op", group = "Iterative OpMode")
-
 class TeliOpMode_Iterative : BaseOpMode() {
-    // Declare OpMode members.
-
-    // Declare OpMode members.
-
-
     var runtime : ElapsedTime = ElapsedTime()
     private var forwardMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
@@ -45,7 +37,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
-    private var maxLaunchSpeed = 2700.0
+    private var maxLaunchSpeed = 2700.0 // ticks
     //TODO add to drive train
     private var avgLaunchVelocity = 0.0 // ticks
     private var launchSpeedIncrement = 25
@@ -93,7 +85,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
             launchSpeed = nearZoneLaunchSpeed
         }
 
-        //telemetry.addData("yaw power: ", yawMotion)
 
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
@@ -101,9 +92,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
-
-
-        //todo debug index out of bound
 
             if (gamepad1.right_bumper) {
                 powerSettingIndex++
@@ -115,32 +103,35 @@ class TeliOpMode_Iterative : BaseOpMode() {
                 Thread.sleep(250L)
             }
 
-
+        powerSettingIndex %= powerSettings.size // keep power setting at 3
+        powerSettingIndex = abs(powerSettingIndex)
 
         // Normalize the values so no wheel power exceeds 100%
 
+
+
         for(p in motorPowers){
-            if (p > abs(maxDriveMotorPower)){
+            if (abs(p) > maxDriveMotorPower){
                 maxDriveMotorPower = abs(p)
             }
         }
         // power setting will come after
 
         // the motors should not be normalised to unless a index of motorPower is grater then one
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * diverPower}
+
 
         if(maxDriveMotorPower > 1){
             motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
+        }
+        else {
+            driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * diverPower}
         }
 
 
 
 
 
-        /*
-        TODO test this out with hardware people see what speeds work best.
-        after you find the speeds the the driver wants put them map them to buttons.
-         */
+
 
         if (gamepad2.aWasPressed()) {
             launchSpeed += launchSpeedIncrement
