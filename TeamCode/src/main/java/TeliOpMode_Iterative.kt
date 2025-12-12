@@ -92,9 +92,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
-        for (i in motorPowers){
-            telemetry.addData("motor pow: ", i)
-        }
+
 
 
         if (gamepad1.right_bumper) {
@@ -111,25 +109,32 @@ class TeliOpMode_Iterative : BaseOpMode() {
         powerSettingIndex = abs(powerSettingIndex)
 
         // Normalize the values so no wheel power exceeds 100%
-
-
-
         for(p in motorPowers){
             if (abs(p) > maxDriveMotorPower){
                 maxDriveMotorPower = abs(p)
             }
         }
-        // power setting will come after
+        if(maxDriveMotorPower < 1){
+            // if the drive motor power is less then one the motors will be set faster then 1.0
+            maxDriveMotorPower = 1.0
+        }
+        motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
+        for (i in motorPowers){
+            telemetry.addData("motor pow: ", i)
+        }
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * diverPower}
+
+
 
         // the motors should not be normalised to unless a index of motorPower is grater then one
 
-
+        /*
         if(maxDriveMotorPower > 1){
             motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         }
-        else {
-            driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * diverPower}
-        }
+        */
+
+
 
         if (gamepad2.aWasPressed()) {
             launchSpeed += launchSpeedIncrement
