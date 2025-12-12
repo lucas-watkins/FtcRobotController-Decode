@@ -131,12 +131,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
             driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * diverPower}
         }
 
-
-
-
-
-
-
         if (gamepad2.aWasPressed()) {
             launchSpeed += launchSpeedIncrement
         } else if (gamepad2.bWasPressed()) {
