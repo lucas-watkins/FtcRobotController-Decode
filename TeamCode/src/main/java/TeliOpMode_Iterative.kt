@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
-import kotlinx.coroutines.delay
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import kotlin.math.abs
 
@@ -33,7 +30,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
     private val powerSettings = arrayOf(0.25, 0.5, 0.66)
     private var powerSettingIndex = 0
-    private var diverPower = powerSettings[powerSettingIndex]
+    private var drivePower = powerSettings[powerSettingIndex]
 
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
@@ -108,6 +105,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
         powerSettingIndex %= powerSettings.size // keep power setting at 3
         powerSettingIndex = abs(powerSettingIndex)
 
+        drivePower = powerSettings[powerSettingIndex]
+
+
         // Normalize the values so no wheel power exceeds 100%
         for(p in motorPowers){
             if (abs(p) > maxDriveMotorPower){
@@ -119,20 +119,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
             maxDriveMotorPower = 1.0
         }
         motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
-        for (i in motorPowers){
-            telemetry.addData("motor pow: ", i)
-        }
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * diverPower}
-
-
-
-        // the motors should not be normalised to unless a index of motorPower is grater then one
-
-        /*
-        if(maxDriveMotorPower > 1){
-            motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
-        }
-        */
+        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
 
 
@@ -164,15 +151,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
 
         // avgVelocity = ((leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS)) / 2)
 
-        telemetry.addData("launchSpeedSet: ", launchSpeed)
-        telemetry.addData("left launch speed radian: ", leftLauncherMotor.getVelocity(AngleUnit.RADIANS))
-        telemetry.addData("left launch speed radian: ", rightLauncherMotor.getVelocity(AngleUnit.RADIANS))
+
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgLaunchVelocity)
-        // TODO this is output as a irrational number have this be in the form of radians * PI
-        // E.G 0.5π or (1/2)π both work fine
-        telemetry. addData("power setting: ", diverPower)
+        telemetry. addData("power setting: ", drivePower)
 
         telemetry.update()
     }
