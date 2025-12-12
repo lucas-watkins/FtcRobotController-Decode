@@ -92,16 +92,20 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
+        for (i in motorPowers){
+            telemetry.addData("motor pow: ", i)
+        }
 
-            if (gamepad1.right_bumper) {
-                powerSettingIndex++
-                Thread.sleep(250L)
-            }
 
-            if (gamepad1.left_bumper) {
-                powerSettingIndex--
-                Thread.sleep(250L)
-            }
+        if (gamepad1.right_bumper) {
+            powerSettingIndex++
+            Thread.sleep(250L)
+        }
+
+        if (gamepad1.left_bumper) {
+            powerSettingIndex--
+            Thread.sleep(250L)
+        }
 
         powerSettingIndex %= powerSettings.size // prevent index error
         powerSettingIndex = abs(powerSettingIndex)
