@@ -107,21 +107,23 @@ class TeliOpMode_Iterative : BaseOpMode() {
             Thread.sleep(250L)
         }
 
-        powerSettingIndex %= powerSettings.size // prevent index error
+        powerSettingIndex %= powerSettings.size // keep power setting at 3
         powerSettingIndex = abs(powerSettingIndex)
 
         // Normalize the values so no wheel power exceeds 100%
 
 
-        //TODO use maxOf()
-        // motorPower starts off as 0 at the start of the program
+
         for(p in motorPowers){
             if (abs(p) > maxDriveMotorPower){
                 maxDriveMotorPower = abs(p)
             }
         }
+        // power setting will come after
 
         // the motors should not be normalised to unless a index of motorPower is grater then one
+
+
         if(maxDriveMotorPower > 1){
             motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         }
