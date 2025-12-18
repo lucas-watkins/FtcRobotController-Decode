@@ -39,7 +39,7 @@ abstract class BaseOpMode : OpMode() {
             // this is needed as otherwise the encoder values will be false
 
             leftFrontMotor.direction = DcMotorSimple.Direction.REVERSE
-            leftRearMotor.direction = DcMotorSimple.Direction.REVERSE
+            leftRearMotor.direction = DcMotorSimple.Direction.FORWARD
             rightFrontMotor.direction = DcMotorSimple.Direction.FORWARD
             rightRearMotor.direction = DcMotorSimple.Direction.FORWARD
 
@@ -54,7 +54,7 @@ abstract class BaseOpMode : OpMode() {
             }
 
             driveTrain.forEach {m ->
-                m.mode = RunMode.RUN_WITHOUT_ENCODER
+                m.mode = RunMode.RUN_USING_ENCODER
             }
 
             // Custom initialization block
