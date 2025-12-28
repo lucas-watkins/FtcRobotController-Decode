@@ -144,7 +144,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         }
 
 
-        // avgVelocity = ((leftLauncherMotor.getVelocity(AngleUnit.RADIANS) + rightLauncherMotor.getVelocity(AngleUnit.RADIANS)) / 2)
+
 
 
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
