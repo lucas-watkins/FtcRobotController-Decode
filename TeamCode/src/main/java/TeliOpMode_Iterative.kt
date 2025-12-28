@@ -26,8 +26,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
-    //TODO implement
-
     private val powerSettings = arrayOf(0.25, 0.5, 0.66)
     private var powerSettingIndex = 0
     private var drivePower = powerSettings[powerSettingIndex]
@@ -69,6 +67,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
+        //TODO ADD CONTROL FROM CAM
         if(gamepad2.left_bumper || gamepad2.dpad_left){
             yawMotion = 0.5
         }
@@ -89,8 +88,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
-
-
 
         if (gamepad1.right_bumper) {
             powerSettingIndex++
@@ -120,8 +117,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
         }
         motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
-
-
 
         if (gamepad2.aWasPressed()) {
             launchSpeed += launchSpeedIncrement
