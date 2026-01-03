@@ -1,30 +1,30 @@
+import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName
+import kotlin.jvm.javaClass
 
 @TeleOp
 class AprilTagDetectionTest : LinearOpMode() {
     lateinit var aprilTagDetector: AprilTagDetector
 
     override fun runOpMode() {
-        aprilTagDetector = AprilTagDetector(hardwareMap.get("Webcam") as CameraName, debugMode = true) // Can't be set in the constructor because the hardwaremap won't be initialized yet
+        aprilTagDetector = AprilTagDetector()
         waitForStart()
 
         while (opModeIsActive()) {
-            val tags = aprilTagDetector.getTags()
-            for (tag in tags) {
-                telemetry.addData("ID: ", tag.id)
-                telemetry.addData("Center point: ", tag.center)
-                telemetry.addData("Tag corners ", tag.corners)
-                telemetry.addData("Pose: ", tag.ftcPose)
-                telemetry.addData("Hamming: ", tag.hamming)
+            val positions = aprilTagDetector.getRelativePositions()
 
+            positions.forEach {
                 telemetry.addLine()
-
+                telemetry.addData("type: ", it.type)
+                telemetry.addData("age: ", it.staleness)
+                telemetry.addData("distance x: ", it.distanceX)
+                telemetry.addData("distance y: ", it.distanceY)
+                telemetry.addData("distance z: ", it.distanceZ)
+                telemetry.addData("angle x: ", it.angleX)
+                telemetry.addData("angle y: ", it.angleY)
                 telemetry.update()
             }
-
-            sleep(20) // share the cpu
         }
     }
 }

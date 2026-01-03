@@ -1,66 +1,78 @@
-import android.util.Size
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.vision.VisionPortal
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
-import com.qualcomm.robotcore.hardware.HardwareMap
-import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
+import com.qualcomm.hardware.limelightvision.LLResult
+import com.qualcomm.hardware.limelightvision.LLResultTypes
+import com.qualcomm.hardware.limelightvision.Limelight3A
 
-enum class Pattern(val id: Int) {
-    GPP(21), // Green purple purple
-    PGP(22), // Purple green purple
-    PPG(23) // Purple purple green
+enum class AprilTagType(val id: Int) {
+    GPP(21), // green purple purple
+    PGP(22), // purple green purple
+    PPG(23), // purple purple green
+    BlueGoal(20),
+    RedGoal(24)
 }
 
-class AprilTagDetector(webcam: CameraName, private val debugMode: Boolean) {
+// relative distance from a tag. this is NOT the actual position of the tag
+data class RelativePos(
+    val type: AprilTagType, // tag id in enum format because magic numbers bad
+    val staleness: Long, // the age (in milliseconds) of the result. you probably want to discard results older then 100ms
 
-    // The debugMode bool determines if it draws everything, which could use up more processor time
-    val processor: AprilTagProcessor = AprilTagProcessor.Builder()
-        // Only show the overlay if we need it,
-        .setDrawTagID(debugMode)
-        .setDrawTagOutline(debugMode)
-        .setDrawAxes(debugMode)
-        .setDrawCubeProjection(debugMode)
-        .build()
+    // escape hatch
+    val rawResult: LLResult,
+    val rawFiducialResult: LLResultTypes.FiducialResult,
 
-    val visionPortal: VisionPortal = VisionPortal.Builder()
-        .setCamera(webcam)
-        .addProcessor(processor)
-        .setCameraResolution(Size(640, 480)) // For the Logitech C270, this is the only resolution that FTC provides a calibration
-        .setStreamFormat(VisionPortal.StreamFormat.MJPEG) // YUY2 is the default but MJPEG uses less bandwidth
-        .enableLiveView(debugMode)
-        .setAutoStopLiveView(true)
-        .build()
+    val distanceX: Double,
+    val distanceY: Double,
+    val distanceZ: Double, // probably not needed for aiming the goal
 
-    fun getTags() : ArrayList<AprilTagDetection> {
-        if (!debugMode) {
-            visionPortal.setProcessorEnabled(processor, true)
-            Thread.sleep(100)
-        }
+    val angleX: Double,
+    val angleY: Double,
+    // no angleZ thing
+)
 
-        val detections = processor.detections
+class AprilTagDetector {
+    var limelight: Limelight3A = Limelight3A(null, "limelight", null)
 
-        if (!debugMode) visionPortal.setProcessorEnabled(processor, false)
+    fun getRelativePositions() : ArrayList<RelativePos> {
+        val result: LLResult = limelight.latestResult
+        val positions = ArrayList<RelativePos>()
 
-        return detections
-    }
+        if (result.isValid) {
+            val fiducials : List<LLResultTypes.FiducialResult> = result.fiducialResults
+            val age = result.staleness
 
-    fun getPattern() : ArrayList<Pattern> {
-        val result = ArrayList<Pattern>()
+            fiducials.forEach {
+                positions.add(RelativePos(
+                    type = when (it.fiducialId) {
+                        21 -> AprilTagType.GPP
+                        22 -> AprilTagType.PGP
+                        23 -> AprilTagType.PPG
+                        20 -> AprilTagType.BlueGoal
+                        24 -> AprilTagType.RedGoal
+                        else -> return@forEach
+                    },
+                    staleness = age,
+                    rawResult = result,
+                    rawFiducialResult = it,
 
-        val detections = getTags()
-        if (detections.isEmpty()) throw Exception("No AprilTags detected")
+                    // robotPoseTargetSpace: AprilTag pose in the camera's coordinate system. "not very useful", according to the docs (liars)
+                    distanceX = it.robotPoseTargetSpace.position.x,
+                    distanceY = it.robotPoseTargetSpace.position.y,
+                    distanceZ = it.robotPoseTargetSpace.position.z,
 
-        for (detection in detections) {
-            when (detection.id) {
-                21 -> result.add(Pattern.GPP)
-                22 -> result.add(Pattern.PGP)
-                23 -> result.add(Pattern.PPG)
-                else -> continue
+                    angleX = it.targetXDegrees,
+                    angleY = it.targetYDegrees,
+                ))
             }
         }
 
-        return result
+        return positions
+    }
+
+    constructor() {
+        limelight.setPollRateHz(100)
+        limelight.start()
+
+        // the pipeline should be set to zero (the only thing we're doing with the limelight is detecting apriltags) but this is just to make sure
+        // do let me know if the pipeline changes
+        limelight.pipelineSwitch(0)
     }
 }
