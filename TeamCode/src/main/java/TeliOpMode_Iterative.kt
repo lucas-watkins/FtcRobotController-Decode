@@ -61,8 +61,11 @@ class TeliOpMode_Iterative : BaseOpMode() {
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
+    fun setLuncherSpedd(){
+
+    }
     override fun loop() {
-        // TODO get controls
+
         forwardMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
@@ -115,7 +118,7 @@ class TeliOpMode_Iterative : BaseOpMode() {
             // if the drive motor power is less then one the motors will be set faster then 1.0
             maxDriveMotorPower = 1.0
         }
-        motorPowers.forEachIndexed {i, m -> motorPowers[i] /= abs(maxDriveMotorPower)}
+        motorPowers.forEachIndexed {i,m -> motorPowers[i] /= abs(maxDriveMotorPower)}
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
         if (gamepad2.aWasPressed()) {
@@ -143,10 +146,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
             servoLauncher.position = 0.7
         }
 
-
-
-
-
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgLaunchVelocity)
@@ -159,5 +158,6 @@ class TeliOpMode_Iterative : BaseOpMode() {
      * Code to run ONCE after the driver hits STOP
      */
     override fun stop() {
+        //stop behavior if needed
     }
 }
