@@ -20,7 +20,7 @@ import kotlin.math.abs
 * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
 */
 @TeleOp(name = "war teli-op", group = "Iterative OpMode")
-class TeliOpMode_Iterative : BaseOpMode() {
+class WarTeliOp : BaseOpMode() {
     var runtime : ElapsedTime = ElapsedTime()
     private var forwardMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
@@ -33,9 +33,8 @@ class TeliOpMode_Iterative : BaseOpMode() {
     // in this could be faster but their is no reason to make it faster
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     private var maxLaunchSpeed = 2700.0 // ticks
-    //TODO add to drive train
+
     private var avgLaunchVelocity = 0.0 // ticks
-    private var launchSpeedIncrement = 25
 
     //zone launch speeds and could need fine toning by the diver!
     private val nearZoneLaunchSpeed = 1600.0
@@ -61,37 +60,42 @@ class TeliOpMode_Iterative : BaseOpMode() {
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
-    fun setLuncherSpedd(){
+    fun setLuanchSpeed(){
+        val launchSpeedIncrement = 25
 
-    }
-    override fun loop() {
-
-        forwardMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
-        lateralMotion = gamepad1.left_stick_x.toDouble()
-        yawMotion = gamepad1.right_stick_x.toDouble()
-
-        //TODO ADD CONTROL FROM CAM
-        if(gamepad2.left_bumper || gamepad2.dpad_left){
-            yawMotion = 0.5
-        }
-        if(gamepad2.right_bumper || gamepad2.dpad_right){
-            yawMotion = -0.5
-        }
         if(gamepad2.dpad_up){
             launchSpeed = farZoneLaunchSpeed
         }
         if(gamepad2.dpad_down){
             launchSpeed = nearZoneLaunchSpeed
         }
+        if(launchSpeed > maxLaunchSpeed){
+            launchSpeed = maxLaunchSpeed
+        }
+        if(launchSpeed < 0.0){
+            launchSpeed = 0.0
+        }
+        for(m in launcherMotors){
+            m.velocity = launchSpeed
+        }
+        if (gamepad2.aWasPressed()) {
+            launchSpeed += launchSpeedIncrement
+        } else if (gamepad2.bWasPressed()) {
+            launchSpeed -= launchSpeedIncrement
+        }
+    }
 
-
-        val motorPowers = arrayOf(
-            -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
-            -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
-            -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
-            -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
-        )
-
+    fun getYawOverride(): Double {
+        val yawOverride = 0.5
+        if(gamepad2.left_bumper || gamepad2.dpad_left){
+            return yawOverride
+        }
+        if(gamepad2.right_bumper || gamepad2.dpad_right){
+             return -yawOverride
+        }
+        return 0.0 //if nothing is pressed
+    }
+    fun setPowerSpeed(){
         if (gamepad1.right_bumper) {
             powerSettingIndex++
             Thread.sleep(250L)
@@ -106,6 +110,23 @@ class TeliOpMode_Iterative : BaseOpMode() {
         powerSettingIndex = abs(powerSettingIndex)
 
         drivePower = powerSettings[powerSettingIndex]
+    }
+    override fun loop() {
+
+        forwardMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
+        lateralMotion = gamepad1.left_stick_x.toDouble()
+        yawMotion = gamepad1.right_stick_x.toDouble()
+
+        //TODO ADD CONTROL FROM CAM
+        // override  yaw motion from bumpers
+        yawMotion += getYawOverride()
+
+        val motorPowers = arrayOf(
+            -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
+            -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
+            -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
+        )
 
 
         // Normalize the values so no wheel power exceeds 100%
@@ -118,26 +139,15 @@ class TeliOpMode_Iterative : BaseOpMode() {
             // if the drive motor power is less then one the motors will be set faster then 1.0
             maxDriveMotorPower = 1.0
         }
-        motorPowers.forEachIndexed {i,m -> motorPowers[i] /= abs(maxDriveMotorPower)}
+        //motorPowers.forEachIndexed {i ,m-> motorPowers[i] /= abs(maxDriveMotorPower)}//
+        for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
+
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
-        if (gamepad2.aWasPressed()) {
-            launchSpeed += launchSpeedIncrement
-        } else if (gamepad2.bWasPressed()) {
-            launchSpeed -= launchSpeedIncrement
-        }
 
-        if(launchSpeed > maxLaunchSpeed){
-            launchSpeed = maxLaunchSpeed
-        }
-        if(launchSpeed < 0.0){
-            launchSpeed = 0.0
-        }
 
-        for(m in launcherMotors){
-            m.velocity = launchSpeed
-        }
-        //TODO move to base op-mode
+
+        //TODO move to base op-mode and get working with new servos
         if(gamepad2.xWasPressed()){
             runtime.reset()
             while(runtime.seconds() < 1.0) {
@@ -145,6 +155,9 @@ class TeliOpMode_Iterative : BaseOpMode() {
             }
             servoLauncher.position = 0.7
         }
+
+        setLuanchSpeed()
+        setPowerSpeed()
 
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
