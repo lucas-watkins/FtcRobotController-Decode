@@ -112,7 +112,7 @@ class WarTeliOp : BaseOpMode() {
         drivePower = powerSettings[powerSettingIndex]
     }
     override fun loop() {
-
+        leftGateServoOpen()
         forwardMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()

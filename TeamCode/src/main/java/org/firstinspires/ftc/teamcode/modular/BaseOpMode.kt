@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
+import kotlin.concurrent.thread
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -20,6 +21,14 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
     protected lateinit var servoLauncher: Servo
+    protected val openPos = 0.45
+    protected val closePos = 0.3// do not set this lower then 0.3
+
+     lateinit var leftGateServo: Servo
+    
+     lateinit var rightGateServo: Servo
+
+
 
     // Don't override this function, override initialize instead
     override fun init() {
@@ -32,6 +41,8 @@ abstract class BaseOpMode : OpMode() {
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
             servoLauncher = hardwareMap["servoLauncher"] as Servo
+            leftGateServo = hardwareMap["rightGateServo"] as Servo
+            rightGateServo = hardwareMap["leftGateServo"] as Servo
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
             launcherMotors = arrayOf(rightLauncherMotor, leftLauncherMotor)
 
@@ -69,8 +80,16 @@ abstract class BaseOpMode : OpMode() {
         }
     }
 
+
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
+
+    fun leftGateServoOpen(){
+        Thread.sleep(1000)
+        leftGateServo.position = openPos
+        Thread.sleep(1000)
+        leftGateServo.position = closePos
+    }
 
 
 }
