@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
-import kotlin.concurrent.thread
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -21,8 +20,8 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
     protected lateinit var servoLauncher: Servo
-    protected val openPos = 0.45
-    protected val closePos = 0.3// do not set this lower then 0.3
+
+
 
      lateinit var leftGateServo: Servo
     
@@ -59,6 +58,8 @@ abstract class BaseOpMode : OpMode() {
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
 
 
+
+
             for( m in launcherMotors){
                 m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
                 m.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -84,12 +85,18 @@ abstract class BaseOpMode : OpMode() {
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
 
-    fun leftGateServoOpen(){
-        Thread.sleep(1000)
-        leftGateServo.position = openPos
-        Thread.sleep(1000)
-        leftGateServo.position = closePos
+    // TODO Fix balls getting stuck
+    fun leftGateServoCycle(){
+        leftGateServo.position = 0.45
+        Thread.sleep(500)
+        leftGateServo.position = 0.66
     }
+    fun rightGateServoCycle(){
+        rightGateServo.position = 0.5
+        Thread.sleep(500)
+        rightGateServo.position = 0.3
+    }
+
 
 
 }

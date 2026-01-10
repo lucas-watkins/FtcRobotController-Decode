@@ -42,6 +42,7 @@ class WarTeliOp : BaseOpMode() {
     private val farZoneLaunchSpeed = 2300.0
 
     private var maxDriveMotorPower = 0.0
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -61,6 +62,7 @@ class WarTeliOp : BaseOpMode() {
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     fun setLuanchSpeed(){
+
         val launchSpeedIncrement = 25
 
         if(gamepad2.dpad_up){
@@ -112,7 +114,8 @@ class WarTeliOp : BaseOpMode() {
         drivePower = powerSettings[powerSettingIndex]
     }
     override fun loop() {
-        leftGateServoOpen()
+
+
         forwardMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
@@ -145,8 +148,6 @@ class WarTeliOp : BaseOpMode() {
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
 
-
-
         //TODO move to base op-mode and get working with new servos
         if(gamepad2.xWasPressed()){
             runtime.reset()
@@ -155,6 +156,13 @@ class WarTeliOp : BaseOpMode() {
             }
             servoLauncher.position = 0.7
         }
+        if(gamepad1.yWasPressed()){
+            leftGateServoCycle()
+        }
+        if(gamepad1.aWasPressed()){
+            rightGateServoCycle()
+        }
+
 
         setLuanchSpeed()
         setPowerSpeed()
