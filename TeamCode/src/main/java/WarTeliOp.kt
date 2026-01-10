@@ -43,6 +43,8 @@ class WarTeliOp : BaseOpMode() {
 
     private var maxDriveMotorPower = 0.0
 
+    private var launcherEndPos = 1.0
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
@@ -152,7 +154,7 @@ class WarTeliOp : BaseOpMode() {
         if(gamepad2.xWasPressed()){
             runtime.reset()
             while(runtime.seconds() < 1.0) {
-                servoLauncher.position = 1.0
+                servoLauncher.position = launcherEndPos
             }
             servoLauncher.position = 0.7
         }
@@ -162,6 +164,14 @@ class WarTeliOp : BaseOpMode() {
         if(gamepad1.aWasPressed()){
             rightGateServoCycle()
         }
+        //debuting code
+        if(gamepad1.dpad_up){
+            launcherEndPos += 0.05
+        }
+        if(gamepad1.dpad_down){
+            launcherEndPos -= 0.05
+        }
+        telemetry.addData("launcher end pop", launcherEndPos)
 
 
         setLuanchSpeed()

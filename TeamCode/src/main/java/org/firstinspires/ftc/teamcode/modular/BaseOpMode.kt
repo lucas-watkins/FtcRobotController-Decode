@@ -86,11 +86,16 @@ abstract class BaseOpMode : OpMode() {
     abstract fun initialize()
 
     // TODO Fix balls getting stuck
+    // cycles the left servo position to briefly let a ball go though
+    // uses a delay the robot so uncontrolled for half a second.
     fun leftGateServoCycle(){
         leftGateServo.position = 0.45
         Thread.sleep(500)
         leftGateServo.position = 0.66
     }
+    // TODO Fix balls getting stuck
+    // cycles the left servo position to briefly let a ball go though.
+    // uses a delay the robot so uncontrolled for half a second.
     fun rightGateServoCycle(){
         rightGateServo.position = 0.5
         Thread.sleep(500)
