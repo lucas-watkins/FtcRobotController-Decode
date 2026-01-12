@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.util.ElapsedTime
+import kotlin.concurrent.thread
+
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -101,6 +104,21 @@ abstract class BaseOpMode : OpMode() {
         Thread.sleep(500)
         rightGateServo.position = 0.3
     }
+    fun fireBall() {
+        val firePos = 0.8
+        val restingPos = 0.7
+        if (rightLauncherMotor.velocity > 1950) {
+            servoLauncher.position = firePos
+            Thread.sleep(500)
+            servoLauncher.position = restingPos
+        } else {
+            // offset to account for wheels being smaller at slow speed
+            servoLauncher.position = firePos + 0.1
+            Thread.sleep(500)
+            servoLauncher.position = restingPos
+        }
+    }
+
 
 
 
