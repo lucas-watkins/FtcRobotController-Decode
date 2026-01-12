@@ -43,7 +43,7 @@ class WarTeliOp : BaseOpMode() {
 
     private var maxDriveMotorPower = 0.0
 
-    private var launcherEndPos = 1.0
+    private var launcherEndPos = 0.8
 
     /*
      * Code to run ONCE when the driver hits INIT
