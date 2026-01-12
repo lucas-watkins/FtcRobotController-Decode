@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
-import com.qualcomm.robotcore.util.ElapsedTime
-import kotlin.concurrent.thread
+
 
 
 /*
@@ -104,7 +103,8 @@ abstract class BaseOpMode : OpMode() {
         Thread.sleep(500)
         rightGateServo.position = 0.3
     }
-    fun fireBall() {
+    fun launchBall() {
+        // fires the ball with a condition for high and low speed launching
         val firePos = 0.8
         val restingPos = 0.7
         if (rightLauncherMotor.velocity > 1950) {

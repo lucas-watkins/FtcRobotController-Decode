@@ -63,7 +63,7 @@ class WarTeliOp : BaseOpMode() {
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
-    fun setLuanchSpeed(){
+    fun setLaunchSpeed(){
 
         val launchSpeedIncrement = 25
 
@@ -99,7 +99,7 @@ class WarTeliOp : BaseOpMode() {
         }
         return 0.0 //if nothing is pressed
     }
-    fun setPowerSpeed(){
+    fun setLaunchSpeedFromDpad(){
         if (gamepad1.right_bumper) {
             powerSettingIndex++
             Thread.sleep(250L)
@@ -116,14 +116,10 @@ class WarTeliOp : BaseOpMode() {
         drivePower = powerSettings[powerSettingIndex]
     }
     override fun loop() {
-
-
         forwardMotion = -gamepad1.left_stick_y.toDouble() // Note: pushing stick forward gives negative value
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
-        //TODO ADD CONTROL FROM CAM
-        // override  yaw motion from bumpers
         yawMotion += getYawOverride()
 
         val motorPowers = arrayOf(
@@ -132,7 +128,6 @@ class WarTeliOp : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
-
 
         // Normalize the values so no wheel power exceeds 100%
         for(p in motorPowers){
@@ -149,10 +144,8 @@ class WarTeliOp : BaseOpMode() {
 
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
-
-
         if(gamepad2.xWasPressed()){
-            fireBall()
+            launchBall()
         }
         if(gamepad1.yWasPressed()){
             leftGateServoCycle()
@@ -160,13 +153,9 @@ class WarTeliOp : BaseOpMode() {
         if(gamepad1.aWasPressed()){
             rightGateServoCycle()
         }
-        //debuting code
 
-
-
-
-        setLuanchSpeed()
-        setPowerSpeed()
+        setLaunchSpeed()
+        setLaunchSpeedFromDpad()
 
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
