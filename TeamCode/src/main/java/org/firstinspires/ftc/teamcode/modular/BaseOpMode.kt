@@ -91,7 +91,7 @@ abstract class BaseOpMode : OpMode() {
     // cycles the left servo position to briefly let a ball go though
     // uses a delay the robot so uncontrolled for half a second.
     fun leftGateServoCycle(){
-        leftGateServo.position = 0.45
+        leftGateServo.position = 0.3
         Thread.sleep(500)
         leftGateServo.position = 0.66
     }

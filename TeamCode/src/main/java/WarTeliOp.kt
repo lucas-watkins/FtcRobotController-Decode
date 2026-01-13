@@ -148,10 +148,10 @@ class WarTeliOp : BaseOpMode() {
             launchBall()
         }
         if(gamepad1.yWasPressed()){
-            leftGateServoCycle()
+            rightGateServoCycle()
         }
         if(gamepad1.aWasPressed()){
-            rightGateServoCycle()
+            leftGateServoCycle()
         }
 
         setLaunchSpeed()
