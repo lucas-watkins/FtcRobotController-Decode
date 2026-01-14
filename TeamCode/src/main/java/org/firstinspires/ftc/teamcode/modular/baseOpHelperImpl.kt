@@ -10,7 +10,7 @@ class baseOpHelperImpl(
     val servoLauncher: Servo
 ) {
     fun leftGateServoCycle(){
-        leftGateServo.position = 0.45
+        leftGateServo.position = 0.4
         Thread.sleep(500)
         leftGateServo.position = 0.6
     }
@@ -18,9 +18,9 @@ class baseOpHelperImpl(
     // cycles the left servo position to briefly let a ball go though.
     // uses a delay the robot so uncontrolled for half a second.
     fun rightGateServoCycle(){
-        rightGateServo.position = 0.5
+        rightGateServo.position = 0.57
         Thread.sleep(500)
-        rightGateServo.position = 0.3
+        rightGateServo.position = 0.35
     }
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching

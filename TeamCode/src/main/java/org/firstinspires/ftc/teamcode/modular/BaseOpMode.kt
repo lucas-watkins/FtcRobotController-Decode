@@ -24,13 +24,13 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var servoLauncher: Servo
     protected lateinit var leftGateServo: Servo
     protected lateinit var rightGateServo: Servo
-    protected var ballLaunch: baseOpHelperImpl = baseOpHelperImpl(leftGateServo, rightGateServo, rightLauncherMotor,servoLauncher)
 
-
+    protected lateinit var ballLaunch: baseOpHelperImpl
 
 
     // Don't override this function, override initialize instead
     override fun init() {
+
         try {
             leftFrontMotor = hardwareMap["leftFrontMotor"] as DcMotorEx
             rightFrontMotor = hardwareMap["rightFrontMotor"] as DcMotorEx
@@ -56,6 +56,12 @@ abstract class BaseOpMode : OpMode() {
 
             rightLauncherMotor.direction = DcMotorSimple.Direction.FORWARD
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
+
+            leftGateServo.position = 0.6
+            rightGateServo.position = 0.35
+
+            ballLaunch = baseOpHelperImpl(leftGateServo, rightGateServo, rightLauncherMotor,servoLauncher)
+
 
 
 
