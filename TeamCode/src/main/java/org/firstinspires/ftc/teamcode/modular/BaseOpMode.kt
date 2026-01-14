@@ -22,12 +22,10 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
     protected lateinit var servoLauncher: Servo
+    protected lateinit var leftGateServo: Servo
+    protected lateinit var rightGateServo: Servo
+    protected var ballLaunch: baseOpHelperImpl = baseOpHelperImpl(leftGateServo, rightGateServo, rightLauncherMotor,servoLauncher)
 
-
-
-     lateinit var leftGateServo: Servo
-    
-     lateinit var rightGateServo: Servo
 
 
 
@@ -81,19 +79,14 @@ abstract class BaseOpMode : OpMode() {
             }
             telemetry.update()
         }
+
     }
 
 
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
 
-    // TODO Fix balls getting stuck
+
     // cycles the left servo position to briefly let a ball go though
     // uses a delay the robot so uncontrolled for half a second.
-
-
-
-
-
-
 }

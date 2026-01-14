@@ -145,13 +145,13 @@ class WarTeliOp : BaseOpMode() {
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
         if(gamepad2.xWasPressed()){
-            launchBall()
+            ballLaunch.launchBall()
         }
         if(gamepad1.yWasPressed()){
-            rightGateServoCycle()
+            ballLaunch.rightGateServoCycle()
         }
         if(gamepad1.aWasPressed()){
-            leftGateServoCycle()
+            ballLaunch.leftGateServoCycle()
         }
 
         setLaunchSpeed()
