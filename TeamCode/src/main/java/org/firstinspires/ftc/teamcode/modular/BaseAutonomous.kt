@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.EncoderDirection
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver.GoBildaOdometryPods
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
+import java.lang.Thread.sleep
 import kotlin.math.abs
 
 abstract class BaseAutonomous : BaseOpMode() {
@@ -25,6 +27,8 @@ abstract class BaseAutonomous : BaseOpMode() {
     protected val rackBallDelay = 2000L
     protected val launchBallDelay = 500L
     protected val motorLaunchVelocity = 2175.0
+    protected var hasWaited = false
+    protected var waitPeriod: UInt = 0U
 
     override fun initialize() {
         odometry = hardwareMap.get(GoBildaPinpointDriver::class.java, "goBildaPinpoint")
@@ -37,7 +41,23 @@ abstract class BaseAutonomous : BaseOpMode() {
         servoLauncher.position = servoRetract
     }
 
+    override fun init_loop() {
+        if (gamepad1.leftBumperWasPressed()) {
+            waitPeriod--
+        }
+        if (gamepad1.rightBumperWasPressed()) {
+            waitPeriod++
+        }
+        telemetry.addLine("Current Wait Period: $waitPeriod seconds")
+        telemetry.addLine("(Left and Right Bumper to Adjust)")
+        telemetry.update()
+    }
+
     override fun loop() {
+        if (!hasWaited) {
+            Thread.sleep(waitPeriod.toLong() * 1000)
+            hasWaited = true
+        }
         telemetry.addLine("Direction: $directionVector")
         telemetry.addLine("Stage Number: ${plan.getStageNumber()}")
         telemetry.addLine("Angle: ${pose.angle}")
@@ -91,4 +111,50 @@ abstract class BaseAutonomous : BaseOpMode() {
         get() {
             return getHeading(AngleUnit.RADIANS)
         }
+
+    protected val launchThreeBalls = arrayOf(
+        Stage(
+            { leftLauncherMotor.velocity < motorLaunchVelocity && rightLauncherMotor.velocity < motorLaunchVelocity },
+            {
+                leftLauncherMotor.velocity = motorLaunchVelocity
+                rightLauncherMotor.velocity = motorLaunchVelocity
+
+                directionVector.x = 0.0 // units
+                directionVector.y = 0.0
+                turnPower = 0.0
+            }
+        ),
+
+        Stage(
+            { ballsLaunched < 3 },
+            {
+                directionVector.x = 0.0
+                directionVector.y = 0.0
+                turnPower = 0.0
+
+                if (servoLauncher.position < servoLaunch) {
+                    servoLauncher.position = servoLaunch
+                    ballsLaunched++
+                    sleep(launchBallDelay)
+                }
+
+                if (servoLauncher.position > servoRetract) {
+                    servoLauncher.position = servoRetract
+                    sleep(rackBallDelay)
+                }
+            }
+        ),
+
+        Stage(
+            { leftLauncherMotor.velocity > (motorLaunchVelocity - 1) && rightLauncherMotor.velocity > (motorLaunchVelocity - 1) },
+            {
+                leftLauncherMotor.velocity = 0.0
+                rightLauncherMotor.velocity = 0.0
+
+                directionVector.x = 0.0
+                directionVector.y = 0.0
+                turnPower = 0.0
+            }
+        )
+    )
 }
