@@ -39,7 +39,7 @@ class WarTeliOp : BaseOpMode() {
     //zone launch speeds and could need fine toning by the diver!
     private val nearZoneLaunchSpeed = 1600.0
 
-    private val farZoneLaunchSpeed = 2300.0
+    private val farZoneLaunchSpeed = 2100.0
 
     private var maxDriveMotorPower = 0.0
 
@@ -76,9 +76,11 @@ class WarTeliOp : BaseOpMode() {
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
         }
+
         if(launchSpeed < 0.0){
             launchSpeed = 0.0
         }
+
         for(m in launcherMotors){
             m.velocity = launchSpeed
         }
@@ -144,13 +146,13 @@ class WarTeliOp : BaseOpMode() {
 
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
-        if(gamepad2.xWasPressed()){
+        if(gamepad2.yWasPressed()){
             launchBall()
         }
-        if(gamepad1.yWasPressed()){
+        if(gamepad2.bWasPressed()){
             rightGateServoCycle()
         }
-        if(gamepad1.aWasPressed()){
+        if(gamepad2.xWasPressed()){
             leftGateServoCycle()
         }
 
