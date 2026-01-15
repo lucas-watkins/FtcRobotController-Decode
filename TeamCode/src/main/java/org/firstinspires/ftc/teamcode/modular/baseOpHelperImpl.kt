@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
 
 class baseOpHelperImpl(
-    val leftGateServo : Servo,
-    val rightGateServo: Servo,
-    val launchMotor: DcMotorEx, // for encoder stuff
-    val servoLauncher: Servo
+   private val leftGateServo : Servo,
+   private val rightGateServo: Servo,
+   private val launchMotor: DcMotorEx, // for encoder stuff
+   private val servoLauncher: Servo
 ) {
-    fun leftGateServoCycle(){
+    fun leftGateServoCycle() {
         leftGateServo.position = 0.4
         Thread.sleep(500)
         leftGateServo.position = 0.6
@@ -17,11 +17,12 @@ class baseOpHelperImpl(
 
     // cycles the left servo position to briefly let a ball go though.
     // uses a delay the robot so uncontrolled for half a second.
-    fun rightGateServoCycle(){
+    fun rightGateServoCycle() {
         rightGateServo.position = 0.57
         Thread.sleep(500)
         rightGateServo.position = 0.35
     }
+
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching
         val firePos = 0.8

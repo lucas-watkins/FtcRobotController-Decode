@@ -99,7 +99,7 @@ class WarTeliOp : BaseOpMode() {
         }
         return 0.0 //if nothing is pressed
     }
-    fun setLaunchSpeedFromDpad(){
+    fun setDriveSpeedFromDpad(){
         if (gamepad1.right_bumper) {
             powerSettingIndex++
             Thread.sleep(250L)
@@ -145,17 +145,17 @@ class WarTeliOp : BaseOpMode() {
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
         if(gamepad2.xWasPressed()){
-            ballLaunch.launchBall()
+            launchBall()
         }
         if(gamepad1.yWasPressed()){
-            ballLaunch.rightGateServoCycle()
+            rightGateServoCycle()
         }
         if(gamepad1.aWasPressed()){
-            ballLaunch.leftGateServoCycle()
+            leftGateServoCycle()
         }
 
         setLaunchSpeed()
-        setLaunchSpeedFromDpad()
+        setDriveSpeedFromDpad()
 
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
@@ -164,6 +164,8 @@ class WarTeliOp : BaseOpMode() {
 
         telemetry.update()
     }
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP
