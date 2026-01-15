@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
 
+
+
 /*
 * Initializes drivetrain other hardware TBD
 */
@@ -20,9 +22,15 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
     protected lateinit var servoLauncher: Servo
+    protected lateinit var leftGateServo: Servo
+    protected lateinit var rightGateServo: Servo
+
+    protected lateinit var ballLaunch: baseOpHelperImpl
+
 
     // Don't override this function, override initialize instead
     override fun init() {
+
         try {
             leftFrontMotor = hardwareMap["leftFrontMotor"] as DcMotorEx
             rightFrontMotor = hardwareMap["rightFrontMotor"] as DcMotorEx
@@ -32,6 +40,8 @@ abstract class BaseOpMode : OpMode() {
             leftLauncherMotor = hardwareMap["leftLauncherMotor"] as DcMotorEx
             rightLauncherMotor = hardwareMap["rightLauncherMotor"] as DcMotorEx
             servoLauncher = hardwareMap["servoLauncher"] as Servo
+            leftGateServo = hardwareMap["rightGateServo"] as Servo
+            rightGateServo = hardwareMap["leftGateServo"] as Servo
             driveTrain = arrayOf(leftFrontMotor, rightFrontMotor, leftRearMotor, rightRearMotor)
             launcherMotors = arrayOf(rightLauncherMotor, leftLauncherMotor)
 
@@ -39,13 +49,21 @@ abstract class BaseOpMode : OpMode() {
             // this is needed as otherwise the encoder values will be false
 
             leftFrontMotor.direction = DcMotorSimple.Direction.REVERSE
-            leftRearMotor.direction = DcMotorSimple.Direction.REVERSE
+            leftRearMotor.direction = DcMotorSimple.Direction.FORWARD
             rightFrontMotor.direction = DcMotorSimple.Direction.FORWARD
             rightRearMotor.direction = DcMotorSimple.Direction.FORWARD
 
 
             rightLauncherMotor.direction = DcMotorSimple.Direction.FORWARD
             leftLauncherMotor.direction = DcMotorSimple.Direction.REVERSE
+
+            leftGateServo.position = 0.6
+            rightGateServo.position = 0.35
+
+            ballLaunch = baseOpHelperImpl(leftGateServo, rightGateServo, rightLauncherMotor,servoLauncher)
+
+
+
 
 
             for( m in launcherMotors){
@@ -54,7 +72,7 @@ abstract class BaseOpMode : OpMode() {
             }
 
             driveTrain.forEach {m ->
-                m.mode = RunMode.RUN_WITHOUT_ENCODER
+                m.mode = RunMode.RUN_USING_ENCODER
             }
 
             // Custom initialization block
@@ -67,10 +85,14 @@ abstract class BaseOpMode : OpMode() {
             }
             telemetry.update()
         }
+
     }
+
 
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
 
 
+    // cycles the left servo position to briefly let a ball go though
+    // uses a delay the robot so uncontrolled for half a second.
 }
