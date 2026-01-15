@@ -37,9 +37,6 @@ class WarTeliOp : BaseOpMode() {
     private var avgLaunchVelocity = 0.0 // ticks
 
     //zone launch speeds and could need fine toning by the diver!
-    private val nearZoneLaunchSpeed = 1600.0
-
-    private val farZoneLaunchSpeed = 2100.0
 
     private var maxDriveMotorPower = 0.0
 
@@ -60,10 +57,20 @@ class WarTeliOp : BaseOpMode() {
         runtime.reset()
     }
 
+    fun getAutoSpeed(): Double{
+        telemetry.addLine("auto mode is not working")
+        return 0.0
+    }
+
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     fun setLaunchSpeed(){
+        val nearZoneLaunchSpeed = 1600.0
+
+        val midZoneLauchSpeed = 1800.0
+
+        val farZoneLaunchSpeed = 2100.0
 
         val launchSpeedIncrement = 25
 
@@ -72,6 +79,15 @@ class WarTeliOp : BaseOpMode() {
         }
         if(gamepad2.dpad_down){
             launchSpeed = nearZoneLaunchSpeed
+        }
+        if(gamepad2.dpad_left){
+            launchSpeed = midZoneLauchSpeed
+        }
+        if(gamepad2.dpad_right){
+            launchSpeed = getAutoSpeed()
+        }
+        if(gamepad2.yWasPressed()){
+            launchSpeed = 0.0
         }
         if(launchSpeed > maxLaunchSpeed){
             launchSpeed = maxLaunchSpeed
@@ -84,22 +100,16 @@ class WarTeliOp : BaseOpMode() {
         for(m in launcherMotors){
             m.velocity = launchSpeed
         }
-        if (gamepad2.aWasPressed()) {
+        if (gamepad2.right_bumper) {
             launchSpeed += launchSpeedIncrement
-        } else if (gamepad2.bWasPressed()) {
+        } else if (gamepad2.left_bumper) {
             launchSpeed -= launchSpeedIncrement
         }
     }
 
     fun getYawOverride(): Double {
-        val yawOverride = 0.5
-        if(gamepad2.left_bumper || gamepad2.dpad_left){
-            return yawOverride
-        }
-        if(gamepad2.right_bumper || gamepad2.dpad_right){
-             return -yawOverride
-        }
-        return 0.0 //if nothing is pressed
+        return (gamepad2.left_trigger - gamepad2.right_trigger)*0.33
+
     }
     fun setDriveSpeedFromDpad(){
         if (gamepad1.right_bumper) {
@@ -146,7 +156,7 @@ class WarTeliOp : BaseOpMode() {
 
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
-        if(gamepad2.yWasPressed()){
+        if(gamepad2.aWasPressed()){
             launchBall()
         }
         if(gamepad2.bWasPressed()){
