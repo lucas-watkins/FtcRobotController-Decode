@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode
 
-import Localization
-import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
-import kotlin.math.*
+import kotlin.math.abs
 
 
 /*
@@ -39,11 +36,14 @@ class WarTeliOp : BaseOpMode() {
 
     private var avgLaunchVelocity = 0.0 // ticks
 
+    //zone launch speeds and could need fine toning by the diver!
+
     private var maxDriveMotorPower = 0.0
 
-    private lateinit var limelight: Limelight3A
-    private lateinit var imu: IMU
-    private lateinit var localization: Localization
+    private var allyBlue = true
+
+    private var allyRed = false
+
 
 
     /*
@@ -51,13 +51,21 @@ class WarTeliOp : BaseOpMode() {
      */
 
     override fun initialize() {
-        limelight = hardwareMap[Limelight3A::class.java, "limelight"]
-        imu = hardwareMap[IMU::class.java, "imu"]
-        localization = Localization(limelight, imu, Alliance.BLU) // TODO: handle alliance input
 
         telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
+    }
+
+    override fun init_loop() {
+        super.init_loop()
+        if(gamepad1.xWasPressed()){
+            allyBlue = true
+            allyRed = false
+        }else if(gamepad1.bWasPressed()){
+            allyBlue = true
+            allyBlue = false
+        }
 
     }
 
@@ -65,30 +73,61 @@ class WarTeliOp : BaseOpMode() {
         runtime.reset()
     }
 
+    fun getAutoSpeed(): Double{
+        telemetry.addLine("auto mode is not working")
+        return 0.0
+    }
+
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     fun setLaunchSpeed(){
-        launchSpeed = localization.estimatedTicks
+        val nearZoneLaunchSpeed = 1600.0
 
-        launchSpeed = launchSpeed.coerceIn(0.0, maxLaunchSpeed)
+        val midZoneLauchSpeed = 1800.0
+
+        val farZoneLaunchSpeed = 2100.0
+
+        val launchSpeedIncrement = 25
+
+        if(gamepad2.dpad_up){
+            launchSpeed = farZoneLaunchSpeed
+        }
+        if(gamepad2.dpad_down){
+            launchSpeed = nearZoneLaunchSpeed
+        }
+        if(gamepad2.dpad_left){
+            launchSpeed = midZoneLauchSpeed
+        }
+        if(gamepad2.dpad_right){
+            launchSpeed = getAutoSpeed()
+        }
+        if(gamepad2.yWasPressed()){
+            launchSpeed = 0.0
+        }
+        if(launchSpeed > maxLaunchSpeed){
+            launchSpeed = maxLaunchSpeed
+        }
+
+        if(launchSpeed < 0.0){
+            launchSpeed = 0.0
+        }
 
         for(m in launcherMotors){
             m.velocity = launchSpeed
         }
+        if (gamepad2.right_bumper) {
+            launchSpeed += launchSpeedIncrement
+        } else if (gamepad2.left_bumper) {
+            launchSpeed -= launchSpeedIncrement
+        }
     }
 
     fun getYawOverride(): Double {
-        val yawOverride = 0.5
-        if(gamepad2.left_bumper || gamepad2.dpad_left){
-            return yawOverride
-        }
-        if(gamepad2.right_bumper || gamepad2.dpad_right){
-             return -yawOverride
-        }
-        return 0.0 //if nothing is pressed
+        return (gamepad2.left_trigger - gamepad2.right_trigger)*0.33
+
     }
-    fun setLaunchSpeedFromDpad(){
+    fun setDriveSpeedFromDpad(){
         if (gamepad1.right_bumper) {
             powerSettingIndex++
             Thread.sleep(250L)
@@ -120,7 +159,9 @@ class WarTeliOp : BaseOpMode() {
 
         // Normalize the values so no wheel power exceeds 100%
         for(p in motorPowers){
-            maxDriveMotorPower = min(abs(p), maxDriveMotorPower)
+            if (abs(p) > maxDriveMotorPower){
+                maxDriveMotorPower = abs(p)
+            }
         }
         if(maxDriveMotorPower < 1){
             // if the drive motor power is less then one the motors will be set faster then 1.0
@@ -131,28 +172,30 @@ class WarTeliOp : BaseOpMode() {
 
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
 
+        if(gamepad2.aWasPressed()){
+            launchBall()
+        }
+        if(gamepad2.bWasPressed()){
+            rightGateServoCycle()
+        }
         if(gamepad2.xWasPressed()){
-            ballLaunch.launchBall()
-        }
-        if(gamepad1.yWasPressed()){
-            ballLaunch.rightGateServoCycle()
-        }
-        if(gamepad1.aWasPressed()){
-            ballLaunch.leftGateServoCycle()
+            leftGateServoCycle()
         }
 
         setLaunchSpeed()
-//        setLaunchSpeedFromDpad()
+        setDriveSpeedFromDpad()
 
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgLaunchVelocity)
-        telemetry.addData("power setting: ", drivePower)
-        telemetry.addData("distance: ", localization.distanceFromGoal)
-        telemetry.addData("tick from localization: ", localization.estimatedTicks)
+        telemetry. addData("power setting: ", drivePower)
+        telemetry.addData("red", allyRed)
+        telemetry.addData("blue", allyBlue)
 
         telemetry.update()
     }
+
+
 
     /*
      * Code to run ONCE after the driver hits STOP
