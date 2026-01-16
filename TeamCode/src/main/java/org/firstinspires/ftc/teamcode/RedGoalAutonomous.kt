@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
+import org.firstinspires.ftc.teamcode.modular.*
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
-import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
 
 @Autonomous(name = "RedGoalAutonomous", group = "RedTeam")
 class RedGoalAutonomous : BaseAutonomous() {
@@ -13,7 +12,8 @@ class RedGoalAutonomous : BaseAutonomous() {
             {
                 directionVector.x = 0.0
                 directionVector.y = 1.977
-                turnPower = 0.0
+                turnPower.x = 0.0
+                turnPower.y = 0.0
             }
         ),
 
@@ -22,18 +22,20 @@ class RedGoalAutonomous : BaseAutonomous() {
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0
-                turnPower = 0.75
+                turnPower.x = 0.0
+                turnPower.y = 0.75
             }
         ),
 
-        *launchThreeBalls,
+        *autoHelper.launchBallStage,
 
         Stage(
             { pose.x > -0.75 },
             {
                 directionVector.x = -0.75
                 directionVector.y = 0.0
-                turnPower = 0.0
+                turnPower.x = 0.0
+                turnPower.y = 0.0
             }
         )
     )

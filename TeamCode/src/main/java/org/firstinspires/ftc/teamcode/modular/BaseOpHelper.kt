@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.modular
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
 
-class baseOpHelperImpl(
-   private val leftGateServo : Servo,
-   private val rightGateServo: Servo,
-   private val launchMotor: DcMotorEx, // for encoder stuff
-   private val servoLauncher: Servo
+class BaseOpHelper(
+    private val leftGateServo : Servo,
+    private val rightGateServo: Servo,
+    private val leftLauncherMotor: DcMotorEx,
+    private val rightLauncherMotor: DcMotorEx,
+    private val servoLauncher: Servo
 ) {
-    fun leftGateServoCycle() {
+    fun leftGateServoCycle(){
         leftGateServo.position = 0.4
         Thread.sleep(500)
         leftGateServo.position = 0.6
@@ -17,17 +18,31 @@ class baseOpHelperImpl(
 
     // cycles the left servo position to briefly let a ball go though.
     // uses a delay the robot so uncontrolled for half a second.
-    fun rightGateServoCycle() {
+    fun rightGateServoCycle(){
         rightGateServo.position = 0.57
         Thread.sleep(500)
         rightGateServo.position = 0.35
     }
 
+    var launchMotorsVelocity: Double
+        get() {
+            if (leftLauncherMotor.velocity - rightLauncherMotor.velocity in -1.0..1.0) {
+                return leftLauncherMotor.velocity
+            }
+
+            return -1.0
+        }
+
+        set(velocity) {
+            leftLauncherMotor.velocity = velocity
+            rightLauncherMotor.velocity = velocity
+        }
+
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching
         val firePos = 0.8
         val restingPos = 0.7
-        if (launchMotor.velocity > 1950) {
+        if (leftLauncherMotor.velocity > 1950) {
             servoLauncher.position = firePos
             Thread.sleep(500)
             servoLauncher.position = restingPos
