@@ -78,9 +78,10 @@ class Localization {
             return _fieldPosition
         }
 
+    private var _distanceFromGoal: Double = 0.0
     val distanceFromGoal: Double
         get() {
-            val fieldPos = this.fieldPosition ?: return 0.0 // sentinal value for test
+            val fieldPos = this.fieldPosition ?: return _distanceFromGoal
 
             val (goalX, goalY) = if (alliance == Alliance.BLU) {
                 Pair(bluGoalX, bluGoalY)
@@ -94,7 +95,9 @@ class Localization {
             val dx = goalX - robotX
             val dy = goalY - robotY
 
-            return sqrt(dx * dx + dy * dy) * 100 // it gets converted into cm
+            _distanceFromGoal = sqrt(dx * dx + dy * dy) * 100 // it gets converted into cm
+
+            return _distanceFromGoal
         }
 
     private var _estimatedTicks: Double = 0.0
@@ -102,6 +105,57 @@ class Localization {
         get() {
             _estimatedTicks = (1.5102 * this.distanceFromGoal) + 1837.16327
             return _estimatedTicks
+        }
+
+    val relativePositions: ArrayList<RelativePos>
+        get() {
+            val result: LLResult = limelight.latestResult
+            val positions = ArrayList<RelativePos>()
+
+            if (result.isValid) {
+                val fiducials : List<LLResultTypes.FiducialResult> = result.fiducialResults
+                val age = result.staleness
+
+                fiducials.forEach {
+                    positions.add(RelativePos(
+                        type = when (it.fiducialId) {
+                            21 -> AprilTagType.GPP
+                            22 -> AprilTagType.PGP
+                            23 -> AprilTagType.PPG
+                            20 -> AprilTagType.BlueGoal
+                            24 -> AprilTagType.RedGoal
+                            else -> return@forEach // invalid tag
+                        },
+
+                        staleness = age,
+                        rawResult = result,
+                        rawFiducialResult = it,
+
+                        distanceX = it.robotPoseTargetSpace.position.x,
+                        distanceY = it.robotPoseTargetSpace.position.y,
+                        distanceZ = it.robotPoseTargetSpace.position.z,
+
+                        angleX = it.targetXDegrees,
+                        angleY = it.targetYDegrees,
+                    ))
+                }
+            }
+
+            return positions
+        }
+
+    val angleToGoal: Double?
+        get() {
+            val tags = relativePositions
+            val targetTag = if (alliance == Alliance.BLU) AprilTagType.BlueGoal else AprilTagType.RedGoal
+
+            tags.forEach {
+                if (it.type == targetTag) {
+                    return it.angleX
+                }
+            }
+
+            return null
         }
 
     constructor(ll: Limelight3A, imu: IMU, currentAlliance: Alliance) {
