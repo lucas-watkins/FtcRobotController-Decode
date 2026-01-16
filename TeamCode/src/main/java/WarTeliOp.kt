@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode
 
+import Localization
+import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
-import kotlin.math.abs
+import kotlin.math.*
 
 
 /*
@@ -36,13 +39,11 @@ class WarTeliOp : BaseOpMode() {
 
     private var avgLaunchVelocity = 0.0 // ticks
 
-    //zone launch speeds and could need fine toning by the diver!
-    private val nearZoneLaunchSpeed = 1600.0
-
-    private val farZoneLaunchSpeed = 2300.0
-
     private var maxDriveMotorPower = 0.0
 
+    private lateinit var limelight: Limelight3A
+    private lateinit var imu: IMU
+    private lateinit var localization: Localization
 
 
     /*
@@ -50,6 +51,10 @@ class WarTeliOp : BaseOpMode() {
      */
 
     override fun initialize() {
+        limelight = hardwareMap[Limelight3A::class.java, "limelight"]
+        imu = hardwareMap[IMU::class.java, "imu"]
+        localization = Localization(limelight, imu, Alliance.BLU) // TODO: handle alliance input
+
         telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
@@ -64,28 +69,12 @@ class WarTeliOp : BaseOpMode() {
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
     fun setLaunchSpeed(){
+        launchSpeed = localization.estimatedTicks
 
-        val launchSpeedIncrement = 25
+        launchSpeed = launchSpeed.coerceIn(0.0, maxLaunchSpeed)
 
-        if(gamepad2.dpad_up){
-            launchSpeed = farZoneLaunchSpeed
-        }
-        if(gamepad2.dpad_down){
-            launchSpeed = nearZoneLaunchSpeed
-        }
-        if(launchSpeed > maxLaunchSpeed){
-            launchSpeed = maxLaunchSpeed
-        }
-        if(launchSpeed < 0.0){
-            launchSpeed = 0.0
-        }
         for(m in launcherMotors){
             m.velocity = launchSpeed
-        }
-        if (gamepad2.aWasPressed()) {
-            launchSpeed += launchSpeedIncrement
-        } else if (gamepad2.bWasPressed()) {
-            launchSpeed -= launchSpeedIncrement
         }
     }
 
@@ -131,9 +120,7 @@ class WarTeliOp : BaseOpMode() {
 
         // Normalize the values so no wheel power exceeds 100%
         for(p in motorPowers){
-            if (abs(p) > maxDriveMotorPower){
-                maxDriveMotorPower = abs(p)
-            }
+            maxDriveMotorPower = min(abs(p), maxDriveMotorPower)
         }
         if(maxDriveMotorPower < 1){
             // if the drive motor power is less then one the motors will be set faster then 1.0
@@ -155,12 +142,21 @@ class WarTeliOp : BaseOpMode() {
         }
 
         setLaunchSpeed()
-        setLaunchSpeedFromDpad()
+//        setLaunchSpeedFromDpad()
 
-        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
-        telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
-        telemetry.addData("avg speed: ", avgLaunchVelocity)
-        telemetry. addData("power setting: ", drivePower)
+        val result = localization.limelight.latestResult
+        telemetry.addData("ll result valid", result.isValid)
+        telemetry.addData("ll staleness", result.staleness)
+        telemetry.addData("ll botpose x", result.botpose.position.x)
+        telemetry.addData("ll botpose y", result.botpose.position.y)
+        telemetry.addData("ll tag count", result.fiducialResults.size)
+
+//        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
+//        telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
+//        telemetry.addData("avg speed: ", avgLaunchVelocity)
+//        telemetry.addData("power setting: ", drivePower)
+//        telemetry.addData("distance: ", localization.distanceFromGoal)
+//        telemetry.addData("tick from localization: ", localization.estimatedTicks)
 
         telemetry.update()
     }

@@ -3,19 +3,23 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.IMU
 
-@TeleOp(name = "Localization shenaigans", group = "Test opmodes")
-class AprilTagDetectionTest : LinearOpMode() {
-    lateinit var aprilTagDetector: Localization
-    val limelight = hardwareMap[Limelight3A::class.java, "limelight"]
-    val imu = hardwareMap[IMU::class.java, "imu"]
+@TeleOp(name = "Localization shenanigans", group = "Test opmodes")
+class LocalizationTest : LinearOpMode() {
+    lateinit var localizationizer: Localization
 
     override fun runOpMode() {
-        val localizerinator = Localization(limelight, Alliance.BLU, imu)
+        val limelight = hardwareMap[Limelight3A::class.java, "limelight"]
+        val imu = hardwareMap[IMU::class.java, "imu"]
+        localizationizer = Localization(limelight, imu, Alliance.BLU)
         waitForStart()
 
         while (opModeIsActive()) {
-            val distance = localizerinator.distanceFromGoal
+            val distance = localizationizer.distanceFromGoal
+            val rpm = localizationizer.estimatedTicks
 
+            telemetry.addData("Distance from blue goal", distance)
+            telemetry.addData("Estimated ticks", rpm)
+            telemetry.update()
         }
     }
 }
