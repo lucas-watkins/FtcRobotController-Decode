@@ -144,19 +144,12 @@ class WarTeliOp : BaseOpMode() {
         setLaunchSpeed()
 //        setLaunchSpeedFromDpad()
 
-        val result = localization.limelight.latestResult
-        telemetry.addData("ll result valid", result.isValid)
-        telemetry.addData("ll staleness", result.staleness)
-        telemetry.addData("ll botpose x", result.botpose.position.x)
-        telemetry.addData("ll botpose y", result.botpose.position.y)
-        telemetry.addData("ll tag count", result.fiducialResults.size)
-
-//        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
-//        telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
-//        telemetry.addData("avg speed: ", avgLaunchVelocity)
-//        telemetry.addData("power setting: ", drivePower)
-//        telemetry.addData("distance: ", localization.distanceFromGoal)
-//        telemetry.addData("tick from localization: ", localization.estimatedTicks)
+        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
+        telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
+        telemetry.addData("avg speed: ", avgLaunchVelocity)
+        telemetry.addData("power setting: ", drivePower)
+        telemetry.addData("distance: ", localization.distanceFromGoal)
+        telemetry.addData("tick from localization: ", localization.estimatedTicks)
 
         telemetry.update()
     }
