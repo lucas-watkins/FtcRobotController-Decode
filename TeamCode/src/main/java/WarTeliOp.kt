@@ -40,6 +40,10 @@ class WarTeliOp : BaseOpMode() {
 
     private var maxDriveMotorPower = 0.0
 
+    private var allyBlue = true
+
+    private var allyRed = false
+
 
 
     /*
@@ -47,9 +51,21 @@ class WarTeliOp : BaseOpMode() {
      */
 
     override fun initialize() {
+
         telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
+    }
+
+    override fun init_loop() {
+        super.init_loop()
+        if(gamepad1.xWasPressed()){
+            allyBlue = true
+            allyRed = false
+        }else if(gamepad1.bWasPressed()){
+            allyBlue = true
+            allyBlue = false
+        }
 
     }
 
@@ -173,6 +189,8 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgLaunchVelocity)
         telemetry. addData("power setting: ", drivePower)
+        telemetry.addData("red", allyRed)
+        telemetry.addData("blue", allyBlue)
 
         telemetry.update()
     }
