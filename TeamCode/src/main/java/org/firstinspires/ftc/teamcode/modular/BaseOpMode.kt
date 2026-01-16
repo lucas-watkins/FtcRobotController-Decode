@@ -89,8 +89,24 @@ abstract class BaseOpMode : OpMode() {
     }
 
 
+
+
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
+
+    fun leftGateServoCycle(){
+        ballLaunch.leftGateServoCycle()
+    }
+
+    // cycles the left servo position to briefly let a ball go though.
+    // uses a delay the robot so uncontrolled for half a second.
+    fun rightGateServoCycle(){
+        ballLaunch.rightGateServoCycle()
+    }
+    fun launchBall() {
+        // fires the ball with a condition for high and low speed launching
+       ballLaunch.launchBall()
+        }
 
 
     // cycles the left servo position to briefly let a ball go though
