@@ -28,6 +28,16 @@ class AimingGuide {
         }
     }
 
+    override fun toString() : String {
+        val angle = localization.angleToGoal ?: return "no tag"
+
+        if (angle >= -5 && angle <= 5) {
+            return "perfectly aimed"
+        }
+
+        return if (angle < 5) "turn left" else "turn right"
+    }
+
     constructor(driver: GoBildaPrismDriver, localization: Localization) {
         this.localization = localization
         strip = LedStrip(driver)
