@@ -1,9 +1,11 @@
+package org.firstinspires.ftc.teamcode
+
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
-import kotlin.math.*
+import kotlin.math.sqrt
 
 enum class AprilTagType(val id: Int) {
     GPP(21), // green purple purple

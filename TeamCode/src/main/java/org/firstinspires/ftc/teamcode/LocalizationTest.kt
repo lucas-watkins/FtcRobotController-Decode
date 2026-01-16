@@ -1,9 +1,11 @@
+package org.firstinspires.ftc.teamcode
+
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.IMU
 
-@TeleOp(name = "Localization shenanigans", group = "Test opmodes")
+@TeleOp(name = "org.firstinspires.ftc.teamcode.Localization shenanigans", group = "Test opmodes")
 class LocalizationTest : LinearOpMode() {
     lateinit var localizationizer: Localization
 
