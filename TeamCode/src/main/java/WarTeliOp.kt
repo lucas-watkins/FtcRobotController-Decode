@@ -57,6 +57,8 @@ class WarTeliOp : BaseOpMode() {
         runtime.reset()
     }
 
+
+
     override fun init_loop() {
         super.init_loop()
         if(gamepad1.xWasPressed()){
@@ -184,13 +186,19 @@ class WarTeliOp : BaseOpMode() {
 
         setLaunchSpeed()
         setDriveSpeedFromDpad()
-
+        /*
         telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
         telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
         telemetry.addData("avg speed: ", avgLaunchVelocity)
         telemetry. addData("power setting: ", drivePower)
         telemetry.addData("red", allyRed)
         telemetry.addData("blue", allyBlue)
+         */
+
+        telemetry.addData("lf", leftFrontMotor.velocity)
+        telemetry.addData("lr", leftRearMotor.velocity)
+        telemetry.addData("rf", rightFrontMotor.velocity)
+        telemetry.addData("rr", rightRearMotor.velocity)
 
         telemetry.update()
     }
