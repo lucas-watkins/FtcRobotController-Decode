@@ -45,7 +45,7 @@ abstract class BaseOpMode : OpMode() {
             // this is needed as otherwise the encoder values will be false
 
             leftFrontMotor.direction = DcMotorSimple.Direction.REVERSE
-            leftRearMotor.direction = DcMotorSimple.Direction.FORWARD
+            leftRearMotor.direction = DcMotorSimple.Direction.REVERSE
             rightFrontMotor.direction = DcMotorSimple.Direction.FORWARD
             rightRearMotor.direction = DcMotorSimple.Direction.FORWARD
 
