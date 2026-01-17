@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
-
-
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -18,14 +15,13 @@ abstract class BaseOpMode : OpMode() {
     protected lateinit var leftRearMotor: DcMotorEx
     protected lateinit var rightRearMotor: DcMotorEx
     protected lateinit var driveTrain: Array<DcMotorEx>
-    protected  lateinit var launcherMotors: Array<DcMotorEx>
+    protected lateinit var launcherMotors: Array<DcMotorEx>
     protected lateinit var leftLauncherMotor: DcMotorEx
     protected lateinit var rightLauncherMotor: DcMotorEx
     protected lateinit var servoLauncher: Servo
     protected lateinit var leftGateServo: Servo
     protected lateinit var rightGateServo: Servo
-
-    protected lateinit var ballLaunch: baseOpHelperImpl
+    protected lateinit var baseHelper: BaseOpHelper
 
 
     // Don't override this function, override initialize instead
@@ -60,15 +56,13 @@ abstract class BaseOpMode : OpMode() {
             leftGateServo.position = 0.6
             rightGateServo.position = 0.35
 
-            ballLaunch = baseOpHelperImpl(leftGateServo, rightGateServo, rightLauncherMotor,servoLauncher)
-
-
-
-
+            baseHelper = BaseOpHelper(
+                leftGateServo, rightGateServo, leftLauncherMotor, rightLauncherMotor, servoLauncher
+            )
 
             for( m in launcherMotors){
-                m.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-                m.mode = DcMotor.RunMode.RUN_USING_ENCODER
+                m.mode = RunMode.STOP_AND_RESET_ENCODER
+                m.mode = RunMode.RUN_USING_ENCODER
             }
 
             driveTrain.forEach {m ->
@@ -77,6 +71,7 @@ abstract class BaseOpMode : OpMode() {
 
             // Custom initialization block
             initialize()
+
         } catch (e: Exception) {
             if (e is IllegalArgumentException) {
                 telemetry.addLine(e.message ?: "A hardware device could not be found")
@@ -89,26 +84,6 @@ abstract class BaseOpMode : OpMode() {
     }
 
 
-
-
     // This function must be overridden to initialize hardware related to the derived opmode
     abstract fun initialize()
-
-    fun leftGateServoCycle(){
-        ballLaunch.leftGateServoCycle()
-    }
-
-    // cycles the left servo position to briefly let a ball go though.
-    // uses a delay the robot so uncontrolled for half a second.
-    fun rightGateServoCycle(){
-        ballLaunch.rightGateServoCycle()
-    }
-    fun launchBall() {
-        // fires the ball with a condition for high and low speed launching
-       ballLaunch.launchBall()
-        }
-
-
-    // cycles the left servo position to briefly let a ball go though
-    // uses a delay the robot so uncontrolled for half a second.
 }
