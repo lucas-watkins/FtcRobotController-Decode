@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.modular
 
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
-import org.firstinspires.ftc.teamcode.modular.LedStrip
 
 class AimingGuide {
     var strip: LedStrip
