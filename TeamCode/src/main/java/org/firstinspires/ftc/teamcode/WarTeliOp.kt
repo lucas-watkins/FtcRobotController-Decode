@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode
 
+import com.bylazar.telemetry.PanelsTelemetry
+import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
+import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import kotlin.math.abs
 
 
@@ -26,7 +30,7 @@ class WarTeliOp : BaseOpMode() {
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
     private var launchSpeed = 0.0
-    private val powerSettings = arrayOf(0.25, 0.5, 0.66)
+    private val powerSettings = arrayOf(0.25, 0.5, 0.7, 1.0)
     private var powerSettingIndex = 0
     private var drivePower = powerSettings[powerSettingIndex]
 
@@ -34,15 +38,26 @@ class WarTeliOp : BaseOpMode() {
     // in the configuration of the robot as of nov 4 2700 is if anything too powerful
     private var maxLaunchSpeed = 2700.0 // ticks
 
-    private var avgLaunchVelocity = 0.0 // ticks
-
     //zone launch speeds and could need fine toning by the diver!
 
     private var maxDriveMotorPower = 0.0
 
-    private var allyBlue = true
 
-    private var allyRed = false
+    private lateinit var ledDriver: GoBildaPrismDriver
+
+    private lateinit var aimGide: AimingGuide
+
+    private lateinit var limelight: Limelight3A
+
+    private lateinit var localizationClass: Localization
+
+    private lateinit var imu: IMU
+
+    private var ally = Alliance.BLU
+
+    private var autoSpeed = true
+
+    private val panelsTelemetry = PanelsTelemetry.telemetry
 
 
 
@@ -55,16 +70,22 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("Status", "Initialized")
         telemetry.update()
         runtime.reset()
+        limelight = hardwareMap.get(Limelight3A::class.java, "limelight")
+        ledDriver = hardwareMap.get(GoBildaPrismDriver::class.java, "goBildaPrism")
+        imu = hardwareMap.get(IMU::class.java, "imu")
+        localizationClass = Localization(limelight, imu, ally)
+        aimGide = AimingGuide(ledDriver, localizationClass)
+
     }
+
+
 
     override fun init_loop() {
         super.init_loop()
         if(gamepad1.xWasPressed()){
-            allyBlue = true
-            allyRed = false
+            ally= Alliance.RED
         }else if(gamepad1.bWasPressed()){
-            allyBlue = true
-            allyBlue = false
+            ally = Alliance.BLU
         }
 
     }
@@ -73,15 +94,11 @@ class WarTeliOp : BaseOpMode() {
         runtime.reset()
     }
 
-    fun getAutoSpeed(): Double{
-        telemetry.addLine("auto mode is not working")
-        return 0.0
-    }
 
     /*
      * Code to run REPEATEDLY after the driver hits START but before they hit STOP
      */
-    fun setLaunchSpeed(){
+    fun setLaunchSpeedOverride(){
         val nearZoneLaunchSpeed = 1600.0
 
         val midZoneLauchSpeed = 1800.0
@@ -99,9 +116,7 @@ class WarTeliOp : BaseOpMode() {
         if(gamepad2.dpad_left){
             launchSpeed = midZoneLauchSpeed
         }
-        if(gamepad2.dpad_right){
-            launchSpeed = getAutoSpeed()
-        }
+
         if(gamepad2.yWasPressed()){
             launchSpeed = 0.0
         }
@@ -113,9 +128,7 @@ class WarTeliOp : BaseOpMode() {
             launchSpeed = 0.0
         }
 
-        for(m in launcherMotors){
-            m.velocity = launchSpeed
-        }
+
         if (gamepad2.right_bumper) {
             launchSpeed += launchSpeedIncrement
         } else if (gamepad2.left_bumper) {
@@ -127,7 +140,7 @@ class WarTeliOp : BaseOpMode() {
         return (gamepad2.left_trigger - gamepad2.right_trigger)*0.33
 
     }
-    fun setDriveSpeedFromDpad(){
+    fun setDriveSpeedFromControl(){
         if (gamepad1.right_bumper) {
             powerSettingIndex++
             Thread.sleep(250L)
@@ -150,12 +163,16 @@ class WarTeliOp : BaseOpMode() {
 
         yawMotion += getYawOverride()
 
+        aimGide.update() // updates LED
+
+
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y - gamepad1.left_stick_x - yawMotion,
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
+        setDriveSpeedFromControl()
 
         // Normalize the values so no wheel power exceeds 100%
         for(p in motorPowers){
@@ -181,18 +198,32 @@ class WarTeliOp : BaseOpMode() {
         if(gamepad2.xWasPressed()){
             baseHelper.leftGateServoCycle()
         }
+        if (autoSpeed && gamepad2.dpad_right){
+                autoSpeed = false
+            }
+        if (!autoSpeed && gamepad2.dpad_right){
+            autoSpeed = true
+        }
 
-        setLaunchSpeed()
-        setDriveSpeedFromDpad()
 
-        telemetry.addData("left launch speed tick: ", leftLauncherMotor.velocity)
-        telemetry.addData("right launch speed tick: ", rightLauncherMotor.velocity)
-        telemetry.addData("avg speed: ", avgLaunchVelocity)
-        telemetry. addData("power setting: ", drivePower)
-        telemetry.addData("red", allyRed)
-        telemetry.addData("blue", allyBlue)
+        launchSpeed = localizationClass.estimatedTicks
+
+        for(m in launcherMotors){
+            m.velocity = launchSpeed
+        }
+
+
+
+
+
+        telemetry.addData("autoSpeed", localizationClass.estimatedTicks)
+        telemetry.addData("left flywheel", leftLauncherMotor.velocity)
+        telemetry.addData("right flywheel", rightLauncherMotor.velocity)
+        telemetry.addData("Power Setting",powerSettings)
+        telemetry.addData("aiming info", aimGide.toString())
 
         telemetry.update()
+        panelsTelemetry.update(telemetry)
     }
 
 
