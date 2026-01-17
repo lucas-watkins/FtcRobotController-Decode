@@ -9,7 +9,7 @@ import kotlin.time.TimeSource
 class AimingGuide {
     var strip: LedStrip
     var localization: Localization
-    var rateLimit = false
+    var rateLimit = true
     private val timeSource = TimeSource.Monotonic
     private var lastMark: TimeMark
 
@@ -17,6 +17,7 @@ class AimingGuide {
         val angle = localization.angleToGoal
 
         if (lastMark.elapsedNow().toLong(DurationUnit.MILLISECONDS) > 500 || !rateLimit) {
+            lastMark = timeSource.markNow()
             if (angle == null) {
                 strip.setColorRed()
                 return
@@ -29,14 +30,16 @@ class AimingGuide {
 
             if (angle < 5) {
                 strip.setColorHalfGreenHalfRed()
+                return
             }
 
             if (angle > -5) {
                 strip.setColorHalfRedHalfGreen()
+                return
             }
+
         }
 
-        lastMark = timeSource.markNow()
     }
 
     override fun toString() : String {
