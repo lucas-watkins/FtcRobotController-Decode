@@ -8,11 +8,12 @@ class BaseOpHelper(
     private val rightGateServo: Servo,
     private val leftLauncherMotor: DcMotorEx,
     private val rightLauncherMotor: DcMotorEx,
-    private val servoLauncher: Servo
+    private val servoLauncher: Servo,
 ) {
+    private val delay: Long = 700
     fun leftGateServoCycle(){
         leftGateServo.position = 0.4
-        Thread.sleep(500)
+        Thread.sleep(delay)
         leftGateServo.position = 0.6
     }
 
@@ -20,7 +21,7 @@ class BaseOpHelper(
     // uses a delay the robot so uncontrolled for half a second.
     fun rightGateServoCycle(){
         rightGateServo.position = 0.57
-        Thread.sleep(500)
+        Thread.sleep(delay)
         rightGateServo.position = 0.35
     }
 
