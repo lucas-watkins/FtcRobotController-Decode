@@ -198,15 +198,18 @@ class WarTeliOp : BaseOpMode() {
         if(gamepad2.xWasPressed()){
             baseHelper.leftGateServoCycle()
         }
-        if (autoSpeed && gamepad2.dpad_right){
-                autoSpeed = false
+        if (gamepad2.yWasPressed()){
+                autoSpeed = !autoSpeed
+                launchSpeed= 0.0
             }
-        if (!autoSpeed && gamepad2.dpad_right){
-            autoSpeed = true
+
+
+        if(autoSpeed){
+            launchSpeed = localizationClass.estimatedTicks
+            Thread.sleep(300)
+        }else{
+            setLaunchSpeedOverride()
         }
-
-
-        launchSpeed = localizationClass.estimatedTicks
 
         for(m in launcherMotors){
             m.velocity = launchSpeed
@@ -219,8 +222,10 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("autoSpeed", localizationClass.estimatedTicks)
         telemetry.addData("left flywheel", leftLauncherMotor.velocity)
         telemetry.addData("right flywheel", rightLauncherMotor.velocity)
-        telemetry.addData("Power Setting",powerSettings)
+        telemetry.addData("Power Setting",powerSettings[powerSettingIndex])
+        telemetry.addData("allice", ally)
         telemetry.addData("aiming info", aimGide.toString())
+        telemetry.addLine(autoSpeed.toString())
 
         telemetry.update()
         panelsTelemetry.update(telemetry)
