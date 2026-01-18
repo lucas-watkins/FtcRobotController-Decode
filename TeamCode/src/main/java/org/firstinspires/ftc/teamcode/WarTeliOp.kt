@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import org.firstinspires.ftc.teamcode.modular.Localization
+import org.firstinspires.ftc.teamcode.modular.MutableReference
 import kotlin.math.abs
 
 
@@ -55,7 +56,7 @@ class WarTeliOp : BaseOpMode() {
 
     private lateinit var imu: IMU
 
-    private var ally = Alliance.BLU
+    private var ally = MutableReference(Alliance.BLU)
 
     private var autoSpeed = true
 
@@ -84,9 +85,9 @@ class WarTeliOp : BaseOpMode() {
 
     override fun init_loop() {
         if(gamepad1.xWasPressed()){
-            ally= Alliance.RED
+            ally(Alliance.RED)
         }else if(gamepad1.bWasPressed()){
-            ally = Alliance.BLU
+            ally(Alliance.BLU)
         }
         telemetry.addLine("Alliance $ally")
         telemetry.update()
@@ -143,14 +144,14 @@ class WarTeliOp : BaseOpMode() {
 
     }
     fun setDriveSpeedFromControl(){
-        if (gamepad1.right_bumper) {
+        if (gamepad1.rightBumperWasPressed()) {
             powerSettingIndex++
-            Thread.sleep(250L)
+            //Thread.sleep(250)
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.leftBumperWasPressed()) {
             powerSettingIndex--
-            Thread.sleep(250L)
+            //Thread.sleep(250)
         }
 
         powerSettingIndex %= powerSettings.size // keep power setting at 3
@@ -208,7 +209,7 @@ class WarTeliOp : BaseOpMode() {
 
         if(autoSpeed){
             launchSpeed = localizationClass.estimatedTicks
-            Thread.sleep(300)
+            //Thread.sleep(300)
         }else{
             setLaunchSpeedOverride()
         }

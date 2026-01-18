@@ -48,7 +48,7 @@ data class FieldPos(
 
 class Localization {
     val limelight: Limelight3A
-    var alliance: Alliance
+    var alliance: MutableReference<Alliance>
     val imu: IMU
 
     private val bluGoalX = -1.4827
@@ -100,7 +100,7 @@ class Localization {
         get() {
             val fieldPos = this.fieldPosition ?: return _distanceFromGoal
 
-            val (goalX, goalY) = if (alliance == Alliance.BLU) {
+            val (goalX, goalY) = if (alliance() == Alliance.BLU) {
                 Pair(bluGoalX, bluGoalY)
             } else {
                 Pair(redGoalX, redGoalY)
@@ -164,7 +164,7 @@ class Localization {
     val angleToGoal: Double?
         get() {
             val tags = relativePositions
-            val targetTag = if (alliance == Alliance.BLU) AprilTagType.BlueGoal else AprilTagType.RedGoal
+            val targetTag = if (alliance() == Alliance.BLU) AprilTagType.BlueGoal else AprilTagType.RedGoal
 
             tags.forEach {
                 if (it.type == targetTag) {
@@ -175,7 +175,7 @@ class Localization {
             return null
         }
 
-    constructor(ll: Limelight3A, imu: IMU, currentAlliance: Alliance) {
+    constructor(ll: Limelight3A, imu: IMU, currentAlliance: MutableReference<Alliance>) {
         limelight = ll
         limelight.setPollRateHz(100)
         limelight.start()
