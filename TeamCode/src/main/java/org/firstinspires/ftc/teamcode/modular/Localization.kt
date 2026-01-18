@@ -64,7 +64,7 @@ class Localization {
             limelight.updateRobotOrientation(robotYaw)
             val result: LLResult = limelight.latestResult
 
-            if (!result.isValid) {
+            if (!result.isValid) { // return early if invalid
                 return _fieldPosition
             }
 
@@ -76,6 +76,23 @@ class Localization {
             )
 
             return _fieldPosition
+        }
+
+    private var _motif: AprilTagType? = null
+    val motif: AprilTagType?
+        get() {
+            val result: LLResult = limelight.latestResult
+            val fiducials = result.fiducialResults
+            fiducials.forEach {
+                _motif = when (it.fiducialId) {
+                    21 -> AprilTagType.GPP
+                    22 -> AprilTagType.PGP
+                    23 -> AprilTagType.PPG
+                    else -> return@forEach
+                }
+            }
+
+            return _motif
         }
 
     private var _distanceFromGoal: Double = 0.0
