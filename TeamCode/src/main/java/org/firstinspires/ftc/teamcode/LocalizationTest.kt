@@ -4,9 +4,11 @@ import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.IMU
+import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
+import org.firstinspires.ftc.teamcode.modular.Localization
 
-@TeleOp(name = "org.firstinspires.ftc.teamcode.Localization shenanigans", group = "Test opmodes")
+@TeleOp(name = "org.firstinspires.ftc.teamcode.modular.Localization shenanigans", group = "Test opmodes")
 class LocalizationTest : LinearOpMode() {
     lateinit var localizationizer: Localization
     lateinit var aimingGuide: AimingGuide

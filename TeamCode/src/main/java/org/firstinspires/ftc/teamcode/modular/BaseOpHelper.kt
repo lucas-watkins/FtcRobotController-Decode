@@ -20,7 +20,7 @@ class BaseOpHelper(
     // cycles the left servo position to briefly let a ball go though.
     // uses a delay the robot so uncontrolled for half a second.
     fun rightGateServoCycle(){
-        rightGateServo.position = 0.57
+        rightGateServo.position = 0.55
         Thread.sleep(delay)
         rightGateServo.position = 0.35
     }

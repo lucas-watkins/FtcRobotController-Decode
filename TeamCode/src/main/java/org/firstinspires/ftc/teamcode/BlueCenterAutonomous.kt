@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
-import org.firstinspires.ftc.teamcode.modular.angle
-import org.firstinspires.ftc.teamcode.modular.y
 
 @Autonomous(name = "BlueCenterAutonomous", group = "BlueTeam")
 class BlueCenterAutonomous : BaseAutonomous() {
-    override val plan = AutoStageExecutor(
+    override val alliance = Alliance.BLU
+    override fun getPlan() = AutoStageExecutor(
         Stage(
-            { pose.y < 3.375 },// magic nubers, put units
+            { pose.y < 3.375 },
             {
-                directionVector.x = 0.0 // units
+                directionVector.x = 0.0
                 directionVector.y = 3.375
                 turnPower.x = 0.0
                 turnPower.y = 0.0

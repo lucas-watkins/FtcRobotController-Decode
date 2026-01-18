@@ -5,8 +5,10 @@ import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
+import org.firstinspires.ftc.teamcode.modular.Localization
 import kotlin.math.abs
 
 
@@ -81,13 +83,13 @@ class WarTeliOp : BaseOpMode() {
 
 
     override fun init_loop() {
-        super.init_loop()
         if(gamepad1.xWasPressed()){
             ally= Alliance.RED
         }else if(gamepad1.bWasPressed()){
             ally = Alliance.BLU
         }
-
+        telemetry.addLine("Alliance $ally")
+        telemetry.update()
     }
 
     override fun start() {
