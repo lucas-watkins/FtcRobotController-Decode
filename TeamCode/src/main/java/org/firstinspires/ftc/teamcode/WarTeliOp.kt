@@ -5,8 +5,11 @@ import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
+import org.firstinspires.ftc.teamcode.modular.Localization
+import org.firstinspires.ftc.teamcode.modular.MutableReference
 import kotlin.math.abs
 
 
@@ -53,7 +56,7 @@ class WarTeliOp : BaseOpMode() {
 
     private lateinit var imu: IMU
 
-    private var ally = Alliance.BLU
+    private var ally = MutableReference(Alliance.BLU)
 
     private var autoSpeed = true
 
@@ -81,13 +84,13 @@ class WarTeliOp : BaseOpMode() {
 
 
     override fun init_loop() {
-        super.init_loop()
         if(gamepad1.xWasPressed()){
-            ally= Alliance.RED
+            ally(Alliance.RED)
         }else if(gamepad1.bWasPressed()){
-            ally = Alliance.BLU
+            ally(Alliance.BLU)
         }
-
+        telemetry.addLine("Alliance $ally")
+        telemetry.update()
     }
 
     override fun start() {
@@ -141,17 +144,18 @@ class WarTeliOp : BaseOpMode() {
 
     }
     fun setDriveSpeedFromControl(){
-        if (gamepad1.right_bumper) {
+        if (gamepad1.rightBumperWasPressed()) {
             powerSettingIndex++
-            Thread.sleep(250L)
+            //Thread.sleep(250)
         }
 
-        if (gamepad1.left_bumper) {
+        if (gamepad1.leftBumperWasPressed()) {
             powerSettingIndex--
-            Thread.sleep(250L)
+            //Thread.sleep(250)
         }
 
-        powerSettingIndex %= powerSettings.size // keep power setting at 3
+        if(powerSettingIndex < 0){powerSettingIndex = powerSettings.size - 1}//caden's code new
+        powerSettingIndex %= powerSettings.size // keep power setting
         powerSettingIndex = abs(powerSettingIndex)
 
         drivePower = powerSettings[powerSettingIndex]
@@ -206,7 +210,7 @@ class WarTeliOp : BaseOpMode() {
 
         if(autoSpeed){
             launchSpeed = localizationClass.estimatedTicks
-            Thread.sleep(300)
+            //Thread.sleep(300)
         }else{
             setLaunchSpeedOverride()
         }
@@ -225,7 +229,9 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("Power Setting",powerSettings[powerSettingIndex])
         telemetry.addData("allice", ally)
         telemetry.addData("aiming info", aimGide.toString())
+        telemetry.addData("pow setting index", powerSettingIndex)
         telemetry.addLine(autoSpeed.toString())
+        //telemetry.addLine((-1 % 4).toString())
 
         telemetry.update()
         panelsTelemetry.update(telemetry)
