@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import org.firstinspires.ftc.teamcode.modular.Localization
+import org.firstinspires.ftc.teamcode.modular.MutableReference
 
 @TeleOp(name = "org.firstinspires.ftc.teamcode.modular.Localization shenanigans", group = "Test opmodes")
 class LocalizationTest : LinearOpMode() {
@@ -18,7 +19,7 @@ class LocalizationTest : LinearOpMode() {
         val imu = hardwareMap[IMU::class.java, "imu"]
         val driver = hardwareMap.get(GoBildaPrismDriver::class.java, "goBildaPrism")
 
-        localizationizer = Localization(limelight, imu, Alliance.BLU)
+        localizationizer = Localization(limelight, imu, MutableReference(Alliance.BLU))
         aimingGuide = AimingGuide(driver, localizationizer)
         waitForStart()
 

@@ -41,9 +41,9 @@ class BaseOpHelper(
 
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching
-        val firePos = 0.8
+        val firePos = 0.9
         val restingPos = 0.7
-        if (leftLauncherMotor.velocity > 1950) {
+        /*if (leftLauncherMotor.velocity > 1950) {
             servoLauncher.position = firePos
             Thread.sleep(500)
             servoLauncher.position = restingPos
@@ -52,6 +52,10 @@ class BaseOpHelper(
             servoLauncher.position = firePos + 0.1
             Thread.sleep(500)
             servoLauncher.position = restingPos
-        }
+        }*/
+
+        servoLauncher.position = firePos
+        Thread.sleep(500)
+        servoLauncher.position = restingPos
     }
 }

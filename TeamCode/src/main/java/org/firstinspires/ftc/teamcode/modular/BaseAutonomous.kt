@@ -16,7 +16,7 @@ import kotlin.math.abs
 
 abstract class BaseAutonomous : BaseOpMode() {
     protected abstract fun getPlan(): AutoStageExecutor
-    protected abstract val alliance: Alliance
+    protected abstract val alliance: MutableReference<Alliance>
     protected var pose = Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
     protected val directionVector = Vector2(0.0, 0.0)
     protected var turnPower = Vector2(0.0, 0.0)

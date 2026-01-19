@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import org.firstinspires.ftc.teamcode.modular.LedStrip
 import org.firstinspires.ftc.teamcode.modular.Localization
-import kotlin.time.DurationUnit
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
@@ -17,29 +16,29 @@ class AimingGuide {
     fun update() {
         val angle = localization.angleToGoal
 
-        if (!rateLimit || lastMark.elapsedNow().toLong(DurationUnit.MILLISECONDS) > 500) {
-            lastMark = timeSource.markNow()
+        //if (!rateLimit || lastMark.elapsedNow().toLong(DurationUnit.MILLISECONDS) > 500) {
+            //lastMark = timeSource.markNow()
             if (angle == null) {
                 strip.setColorRed()
                 return
             }
 
-            if (angle >= -5 && angle <= 5) {
+            if (angle >= -10 && angle <= 10) {
                 strip.setColorGreen()
                 return
             }
 
-            if (angle < 5) {
+            if (angle < 10) {
                 strip.setColorHalfGreenHalfRed()
                 return
             }
 
-            if (angle > -5) {
+            if (angle > -10) {
                 strip.setColorHalfRedHalfGreen()
                 return
             }
 
-        }
+        //}
 
     }
 

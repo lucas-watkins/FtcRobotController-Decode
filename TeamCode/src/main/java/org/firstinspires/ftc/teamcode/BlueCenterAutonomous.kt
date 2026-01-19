@@ -5,10 +5,11 @@ import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
+import org.firstinspires.ftc.teamcode.modular.MutableReference
 
 @Autonomous(name = "BlueCenterAutonomous", group = "BlueTeam")
 class BlueCenterAutonomous : BaseAutonomous() {
-    override val alliance = Alliance.BLU
+    override val alliance = MutableReference(Alliance.BLU)
     override fun getPlan() = AutoStageExecutor(
         Stage(
             { pose.y < 3.375 },

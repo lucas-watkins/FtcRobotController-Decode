@@ -154,7 +154,8 @@ class WarTeliOp : BaseOpMode() {
             //Thread.sleep(250)
         }
 
-        powerSettingIndex %= powerSettings.size // keep power setting at 3
+        if(powerSettingIndex < 0){powerSettingIndex = powerSettings.size - 1}//caden's code new
+        powerSettingIndex %= powerSettings.size // keep power setting
         powerSettingIndex = abs(powerSettingIndex)
 
         drivePower = powerSettings[powerSettingIndex]
@@ -228,7 +229,9 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("Power Setting",powerSettings[powerSettingIndex])
         telemetry.addData("allice", ally)
         telemetry.addData("aiming info", aimGide.toString())
+        telemetry.addData("pow setting index", powerSettingIndex)
         telemetry.addLine(autoSpeed.toString())
+        //telemetry.addLine((-1 % 4).toString())
 
         telemetry.update()
         panelsTelemetry.update(telemetry)
