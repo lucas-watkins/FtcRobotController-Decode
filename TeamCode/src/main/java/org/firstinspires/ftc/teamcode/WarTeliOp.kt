@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.modular.Alliance
@@ -146,15 +148,13 @@ class WarTeliOp : BaseOpMode() {
     fun setDriveSpeedFromControl(){
         if (gamepad1.rightBumperWasPressed()) {
             powerSettingIndex++
-            //Thread.sleep(250)
         }
-
         if (gamepad1.leftBumperWasPressed()) {
             powerSettingIndex--
-            //Thread.sleep(250)
+
         }
 
-        if(powerSettingIndex < 0){powerSettingIndex = powerSettings.size - 1}//caden's code new
+        if(powerSettingIndex < 0){powerSettingIndex = powerSettings.size - 1}
         powerSettingIndex %= powerSettings.size // keep power setting
         powerSettingIndex = abs(powerSettingIndex)
 
@@ -169,6 +169,7 @@ class WarTeliOp : BaseOpMode() {
 
         aimGide.update() // updates LED
 
+        //TODO add handbrake
 
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
@@ -176,6 +177,9 @@ class WarTeliOp : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
+
+
+
         setDriveSpeedFromControl()
 
         // Normalize the values so no wheel power exceeds 100%
@@ -189,9 +193,18 @@ class WarTeliOp : BaseOpMode() {
             maxDriveMotorPower = 1.0
         }
         //motorPowers.forEachIndexed {i ,m-> motorPowers[i] /= abs(maxDriveMotorPower)}//
-        for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
 
+        for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
         driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
+
+        if(gamepad1.y){
+            for (m in driveTrain){
+                m.zeroPowerBehavior = ZeroPowerBehavior.BRAKE
+                m.power = 0.0 // dose not overwrite motorPowers
+            }
+        }else if(gamepad1.yWasReleased()){
+            for(m in driveTrain){ m.zeroPowerBehavior = ZeroPowerBehavior.FLOAT}
+        }
 
         if(gamepad2.aWasPressed()){
             baseHelper.launchBall()
@@ -207,10 +220,9 @@ class WarTeliOp : BaseOpMode() {
                 launchSpeed= 0.0
             }
 
-
+        //TODO set a prev lunch speed on cam getting blocked
         if(autoSpeed){
             launchSpeed = localizationClass.estimatedTicks
-            //Thread.sleep(300)
         }else{
             setLaunchSpeedOverride()
         }
@@ -231,7 +243,7 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("aiming info", aimGide.toString())
         telemetry.addData("pow setting index", powerSettingIndex)
         telemetry.addLine(autoSpeed.toString())
-        //telemetry.addLine((-1 % 4).toString())
+
 
         telemetry.update()
         panelsTelemetry.update(telemetry)
