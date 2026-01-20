@@ -19,4 +19,16 @@ class LedStrip(private val driver: GoBildaPrismDriver) {
     fun setColorRed() {
         driver.loadAnimationsFromArtboard(Artboard.ARTBOARD_3)
     }
+
+    fun setColorMotifPPG() {
+        driver.loadAnimationsFromArtboard(Artboard.ARTBOARD_4)
+    }
+
+    fun setColorMotifPGP() {
+        driver.loadAnimationsFromArtboard(Artboard.ARTBOARD_5)
+    }
+
+    fun setColorMotifGPP() {
+        driver.loadAnimationsFromArtboard(Artboard.ARTBOARD_6)
+    }
 }
