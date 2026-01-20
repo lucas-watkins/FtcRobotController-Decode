@@ -1,20 +1,26 @@
 package org.firstinspires.ftc.teamcode.modular
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import java.lang.Thread.sleep
 import java.util.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class BaseAutoOpHelper(
     private val helper: BaseOpHelper,
     private val directionVector: Vector2<Double>,
     private val turnPower: Vector2<Double>,
     private val localization: Localization,
-    private val motif: MutableReference<Optional<AprilTagType>>
+    private val motif: MutableReference<Optional<AprilTagType>>,
+    private val pose: MutableReference<Pose2D>,
+    private val goalLocation: Pose2D
 ) {
     val launchBallStage: Array<Stage>
         get() {
 
-            val initialLaunchMotorsVelocity = localization.estimatedTicks
+            val distanceFromGoal = sqrt((pose().x - goalLocation.x).pow(2) + (pose().y - goalLocation.y).pow(2))
+            val launchMotorsVelocity = 1.5102 * distanceFromGoal + 1837.16327
 
             // might need to be a MutableReference
             var ballsLaunched = 0
@@ -23,14 +29,14 @@ class BaseAutoOpHelper(
 
             return arrayOf(
                 Stage(
-                    { helper.launchMotorsVelocity < initialLaunchMotorsVelocity },
+                    { helper.launchMotorsVelocity < launchMotorsVelocity },
                     {
                         directionVector.x = 0.0
                         directionVector.y = 0.0
                         turnPower.x = 0.0
                         turnPower.y = 0.0
 
-                        helper.launchMotorsVelocity = initialLaunchMotorsVelocity
+                        helper.launchMotorsVelocity = launchMotorsVelocity
                     }
                 ),
 
@@ -74,17 +80,15 @@ class BaseAutoOpHelper(
                             helper.rightGateServoCycle()
                         }
 
-                        sleep(1000)
+                        sleep(750)
 
                         helper.launchBall()
                         ballsLaunched++
-
-                        helper.launchMotorsVelocity = localization.estimatedTicks
                     }
                 ),
 
                 Stage(
-                    { helper.launchMotorsVelocity > initialLaunchMotorsVelocity - 1 },
+                    { helper.launchMotorsVelocity > launchMotorsVelocity - 1 },
                     {
                         helper.launchMotorsVelocity = 0.0
                     }

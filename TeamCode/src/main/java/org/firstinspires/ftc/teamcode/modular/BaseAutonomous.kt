@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import java.lang.Thread.sleep
 import java.util.*
 import kotlin.math.abs
@@ -17,13 +18,15 @@ import kotlin.math.abs
 abstract class BaseAutonomous : BaseOpMode() {
     protected abstract fun getPlan(): AutoStageExecutor
     protected abstract val alliance: MutableReference<Alliance>
-    protected var pose = Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
+    protected abstract val goalLocation: Pose2D
+    protected var pose = MutableReference(Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0))
     protected val directionVector = Vector2(0.0, 0.0)
     protected var turnPower = Vector2(0.0, 0.0)
     protected var isOpModeActive = true
     protected var motif = MutableReference<Optional<AprilTagType>>(Optional.empty())
     protected lateinit var autoHelper: BaseAutoOpHelper
     protected lateinit var localization: Localization
+    protected lateinit var ledStrip: LedStrip
     private lateinit var plan: AutoStageExecutor
     private lateinit var odometry: GoBildaPinpointDriver
     private lateinit var limelight: Limelight3A
@@ -44,7 +47,9 @@ abstract class BaseAutonomous : BaseOpMode() {
         limelight = hardwareMap["limelight"] as Limelight3A
         localization = Localization(limelight, imu, alliance)
 
-        autoHelper = BaseAutoOpHelper(baseHelper, directionVector, turnPower, localization, motif)
+        ledStrip = LedStrip(hardwareMap["goBildaPrism"] as GoBildaPrismDriver)
+
+        autoHelper = BaseAutoOpHelper(baseHelper, directionVector, turnPower, localization, motif, pose, goalLocation)
         plan = getPlan()
 
         driveTrain.forEach { m -> m.mode = RunMode.RUN_USING_ENCODER }
@@ -70,6 +75,13 @@ abstract class BaseAutonomous : BaseOpMode() {
 
             if (newMotifs.size == 1) {
                 motif(Optional.of(newMotifs[0].type))
+
+                when (motif().get()) {
+                    AprilTagType.PPG -> ledStrip.setColorMotifPPG()
+                    AprilTagType.PGP -> ledStrip.setColorMotifPGP()
+                    AprilTagType.GPP -> ledStrip.setColorMotifGPP()
+                    else             -> ledStrip.setColorRed()
+                }
             }
         }
 
@@ -80,17 +92,17 @@ abstract class BaseAutonomous : BaseOpMode() {
 
         telemetry.addLine("Direction: $directionVector")
         telemetry.addLine("Stage Number: ${plan.getStageNumber()}")
-        telemetry.addLine("Angle: ${pose.angle}")
+        telemetry.addLine("Angle: ${pose().angle}")
         telemetry.addLine("Odometry (tile): \n" +
-                "x -> ${pose.x}\n" +
-                "y -> ${pose.y}"
+                "x -> ${pose().x}\n" +
+                "y -> ${pose().y}"
         )
         telemetry.addLine("Servo Pos: ${servoLauncher.position}")
         telemetry.addLine("Motif ${if (motif().isEmpty) "N/A" else motif().get().id}")
         telemetry.update()
 
         odometry.update()
-        pose = odometry.position
+        pose(odometry.position)
 
 
         if (isOpModeActive && !plan.update()) {
@@ -101,7 +113,7 @@ abstract class BaseAutonomous : BaseOpMode() {
             isOpModeActive = false
         }
 
-        rotateDoubleVector(directionVector, pose.angle)
+        rotateDoubleVector(directionVector, pose().angle)
         updateDriveTrain(directionVector, turnPower)
     }
 
@@ -119,19 +131,4 @@ abstract class BaseAutonomous : BaseOpMode() {
         motorPowers.forEachIndexed { i, _ -> motorPowers[i] /= max }
         driveTrain.forEachIndexed { i, m -> m.velocity = motorPowers[i] * -velocity }
     }
-
-    protected val Pose2D.x: Double
-        get() {
-            return Units.convert(getX(DistanceUnit.CM), Units.CM, Units.TILE)
-        }
-
-    protected val Pose2D.y: Double
-        get() {
-            return Units.convert(getY(DistanceUnit.CM), Units.CM, Units.TILE)
-        }
-
-    protected val Pose2D.angle: Double
-        get() {
-            return getHeading(AngleUnit.RADIANS)
-        }
 }

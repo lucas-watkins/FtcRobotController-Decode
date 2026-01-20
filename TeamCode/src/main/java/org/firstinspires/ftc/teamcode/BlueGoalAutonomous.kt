@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.modular.Alliance
-import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.modular.*
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
-import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
-import org.firstinspires.ftc.teamcode.modular.MutableReference
 
 @Autonomous(name = "BlueGoalAutonomous", group = "BlueTeam")
 class BlueGoalAutonomous : BaseAutonomous() {
     override val alliance = MutableReference(Alliance.BLU)
+    override val goalLocation = Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
     override fun getPlan() = AutoStageExecutor(
         Stage(
-            { pose.y < 1.977 },
+            { pose().y < 1.977 },
             {
                 directionVector.x = 0.0
                 directionVector.y = 1.977
@@ -22,7 +23,7 @@ class BlueGoalAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { pose.angle < 2.9 },
+            { localization.angleToGoal == null || (localization.angleToGoal ?: 10.0) > 0.5 },
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0
@@ -36,7 +37,7 @@ class BlueGoalAutonomous : BaseAutonomous() {
         *autoHelper.launchBallStage,
 
         Stage(
-            { pose.x < 0.75 },
+            { pose().x < 0.75 },
             {
                 directionVector.x = 0.75
                 directionVector.y = 0.0
