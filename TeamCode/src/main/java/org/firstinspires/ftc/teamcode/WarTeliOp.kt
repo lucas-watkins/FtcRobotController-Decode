@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.modular.Alliance
+import org.firstinspires.ftc.teamcode.modular.BaseOpHelper
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import org.firstinspires.ftc.teamcode.modular.Localization
@@ -169,7 +169,7 @@ class WarTeliOp : BaseOpMode() {
 
         aimGide.update() // updates LED
 
-        //TODO add handbrake
+
 
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
@@ -194,16 +194,15 @@ class WarTeliOp : BaseOpMode() {
         }
         //motorPowers.forEachIndexed {i ,m-> motorPowers[i] /= abs(maxDriveMotorPower)}//
 
-        for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
+
 
         if(gamepad1.y){
-            for (m in driveTrain){
-                m.zeroPowerBehavior = ZeroPowerBehavior.BRAKE
-                m.power = 0.0 // dose not overwrite motorPowers
-            }
+            baseHelper.handBreak()
         }else if(gamepad1.yWasReleased()){
-            for(m in driveTrain){ m.zeroPowerBehavior = ZeroPowerBehavior.FLOAT}
+            baseHelper.releaseHandBrake()
+        }else{
+            for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
+            driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
         }
 
         if(gamepad2.aWasPressed()){
@@ -220,7 +219,7 @@ class WarTeliOp : BaseOpMode() {
                 launchSpeed= 0.0
             }
 
-        //TODO set a prev lunch speed on cam getting blocked
+
         if(autoSpeed){
             launchSpeed = localizationClass.estimatedTicks
         }else{
