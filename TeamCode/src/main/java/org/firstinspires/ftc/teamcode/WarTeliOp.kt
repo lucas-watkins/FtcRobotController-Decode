@@ -229,6 +229,8 @@ class WarTeliOp : BaseOpMode() {
         for(m in launcherMotors){
             m.velocity = launchSpeed
         }
+        //TESTING CODE DO NOT USE DURING A MATCH
+        leftLauncherMotor.velocity = launchSpeed - 60
 
 
 
@@ -241,6 +243,8 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("allice", ally)
         telemetry.addData("aiming info", aimGide.toString())
         telemetry.addData("pow setting index", powerSettingIndex)
+        telemetry.addData("launch speed dif", baseHelper.getLaunchDiff())
+        telemetry.addData("dif from exspected", ((leftLauncherMotor.velocity + rightLauncherMotor.velocity)/2)- launchSpeed)
         telemetry.addLine(autoSpeed.toString())
 
 
