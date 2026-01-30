@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.modular.Alliance
-import org.firstinspires.ftc.teamcode.modular.BaseOpHelper
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import org.firstinspires.ftc.teamcode.modular.Localization
@@ -34,7 +32,7 @@ class WarTeliOp : BaseOpMode() {
     private var forwardMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
-    private var launchSpeed = 0.0
+    private var launchVelocity = 0.0
     private val powerSettings = arrayOf(0.25, 0.5, 0.7, 1.0)
     private var powerSettingIndex = 0
     private var drivePower = powerSettings[powerSettingIndex]
@@ -63,6 +61,11 @@ class WarTeliOp : BaseOpMode() {
     private var autoSpeed = true
 
     private val panelsTelemetry = PanelsTelemetry.telemetry
+
+    private var launchVelDif = 0.0
+
+    private var prepingToFire = false
+
 
 
 
@@ -113,31 +116,31 @@ class WarTeliOp : BaseOpMode() {
         val launchSpeedIncrement = 25
 
         if(gamepad2.dpad_up){
-            launchSpeed = farZoneLaunchSpeed
+            launchVelocity = farZoneLaunchSpeed
         }
         if(gamepad2.dpad_down){
-            launchSpeed = nearZoneLaunchSpeed
+            launchVelocity = nearZoneLaunchSpeed
         }
         if(gamepad2.dpad_left){
-            launchSpeed = midZoneLauchSpeed
+            launchVelocity = midZoneLauchSpeed
         }
 
         if(gamepad2.yWasPressed()){
-            launchSpeed = 0.0
+            launchVelocity = 0.0
         }
-        if(launchSpeed > maxLaunchSpeed){
-            launchSpeed = maxLaunchSpeed
+        if(launchVelocity > maxLaunchSpeed){
+            launchVelocity = maxLaunchSpeed
         }
 
-        if(launchSpeed < 0.0){
-            launchSpeed = 0.0
+        if(launchVelocity < 0.0){
+            launchVelocity = 0.0
         }
 
 
         if (gamepad2.right_bumper) {
-            launchSpeed += launchSpeedIncrement
+            launchVelocity += launchSpeedIncrement
         } else if (gamepad2.left_bumper) {
-            launchSpeed -= launchSpeedIncrement
+            launchVelocity -= launchSpeedIncrement
         }
     }
 
@@ -205,9 +208,18 @@ class WarTeliOp : BaseOpMode() {
             driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
         }
 
+        launchVelDif = baseHelper.getLaunchDiff()
+
         if(gamepad2.aWasPressed()){
-            baseHelper.launchBall()
+            prepingToFire = true
         }
+        if(prepingToFire && launchVelDif < 50){
+            baseHelper.launchBall()
+            prepingToFire = false
+        }else if(prepingToFire){
+            telemetry.addLine("waiting to fire")
+        }
+
         if(gamepad2.bWasPressed()){
             baseHelper.rightGateServoCycle()
         }
@@ -216,21 +228,21 @@ class WarTeliOp : BaseOpMode() {
         }
         if (gamepad2.yWasPressed()){
                 autoSpeed = !autoSpeed
-                launchSpeed= 0.0
+                launchVelocity= 0.0
             }
 
 
         if(autoSpeed){
-            launchSpeed = localizationClass.estimatedTicks
+            launchVelocity = localizationClass.estimatedTicks
         }else{
             setLaunchSpeedOverride()
         }
 
         for(m in launcherMotors){
-            m.velocity = launchSpeed
+            m.velocity = launchVelocity
         }
-        //TESTING CODE DO NOT USE DURING A MATCH
-        leftLauncherMotor.velocity = launchSpeed - 60
+
+
 
 
 
@@ -244,7 +256,6 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("aiming info", aimGide.toString())
         telemetry.addData("pow setting index", powerSettingIndex)
         telemetry.addData("launch speed dif", baseHelper.getLaunchDiff())
-        telemetry.addData("dif from exspected", ((leftLauncherMotor.velocity + rightLauncherMotor.velocity)/2)- launchSpeed)
         telemetry.addLine(autoSpeed.toString())
 
 

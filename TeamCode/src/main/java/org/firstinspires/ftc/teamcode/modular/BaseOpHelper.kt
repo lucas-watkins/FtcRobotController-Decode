@@ -5,7 +5,6 @@ package org.firstinspires.ftc.teamcode.modular
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.robotcore.external.Telemetry
 
 import kotlin.math.abs
 
@@ -16,6 +15,7 @@ class BaseOpHelper(
     private val rightLauncherMotor: DcMotorEx,
     private val servoLauncher: Servo,
     private val driveTrain: Array<DcMotorEx>,
+
 
 ) {
     private val delay: Long = 700
@@ -66,21 +66,19 @@ class BaseOpHelper(
             rightLauncherMotor.velocity = velocity
         }
 
+
+
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching
         // handBreak() // stops the robot in one place
         val firePos = 0.9
         val restingPos = 0.7
-        val deviation = getLaunchDiff()
 
-        if(deviation < 40){
-            servoLauncher.position = firePos
-            Thread.sleep(500)
-            servoLauncher.position = restingPos
-        }else{
-            Thread.sleep(10)
-            launchBall()
-        }
+        servoLauncher.position = firePos
+        Thread.sleep(500)
+        servoLauncher.position = restingPos
+
+
 
     }
 }
