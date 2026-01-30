@@ -68,7 +68,7 @@ class BaseOpHelper(
 
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching
-
+        // handBreak() // stops the robot in one place
         val firePos = 0.9
         val restingPos = 0.7
         val deviation = getLaunchDiff()
