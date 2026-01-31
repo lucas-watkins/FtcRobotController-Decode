@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.modular.*
+import org.firstinspires.ftc.teamcode.modular.Alliance
+import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
+import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
+import org.firstinspires.ftc.teamcode.modular.MutableReference
 
 @Autonomous(name = "BlueGoalAutonomous", group = "BlueTeam")
 class BlueGoalAutonomous : BaseAutonomous() {
-    override val plan = AutoStageExecutor(
+    override val alliance = MutableReference(Alliance.BLU)
+    override fun getPlan() = AutoStageExecutor(
         Stage(
             { pose.y < 1.977 },
             {
@@ -22,8 +26,10 @@ class BlueGoalAutonomous : BaseAutonomous() {
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0
-                turnPower.x = 0.75
-                turnPower.y = 0.0
+                //turnPower.x = 0.75
+                //turnPower.y = 0.0
+                turnPower.x = 0.0
+                turnPower.y = 0.75
             }
         ),
 

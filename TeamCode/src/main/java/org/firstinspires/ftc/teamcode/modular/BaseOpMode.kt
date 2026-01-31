@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.Telemetry
 
 /*
 * Initializes drivetrain other hardware TBD
@@ -28,6 +29,7 @@ abstract class BaseOpMode : OpMode() {
     override fun init() {
 
         try {
+
             leftFrontMotor = hardwareMap["leftFrontMotor"] as DcMotorEx
             rightFrontMotor = hardwareMap["rightFrontMotor"] as DcMotorEx
             leftRearMotor = hardwareMap["leftRearMotor"] as DcMotorEx
@@ -57,7 +59,7 @@ abstract class BaseOpMode : OpMode() {
             rightGateServo.position = 0.35
 
             baseHelper = BaseOpHelper(
-                leftGateServo, rightGateServo, leftLauncherMotor, rightLauncherMotor, servoLauncher
+                leftGateServo, rightGateServo, leftLauncherMotor, rightLauncherMotor, servoLauncher, driveTrain
             )
 
             for( m in launcherMotors){

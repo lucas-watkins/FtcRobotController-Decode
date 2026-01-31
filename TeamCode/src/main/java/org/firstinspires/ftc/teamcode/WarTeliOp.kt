@@ -5,8 +5,11 @@ import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.IMU
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.modular.Alliance
 import org.firstinspires.ftc.teamcode.modular.BaseOpMode
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
+import org.firstinspires.ftc.teamcode.modular.Localization
+import org.firstinspires.ftc.teamcode.modular.MutableReference
 import kotlin.math.abs
 
 
@@ -29,7 +32,7 @@ class WarTeliOp : BaseOpMode() {
     private var forwardMotion = 0.0 // Note: pushing stick forward gives negative value
     private var lateralMotion = 0.0
     private var yawMotion = 0.0
-    private var launchSpeed = 0.0
+    private var launchVelocity = 0.0
     private val powerSettings = arrayOf(0.25, 0.5, 0.7, 1.0)
     private var powerSettingIndex = 0
     private var drivePower = powerSettings[powerSettingIndex]
@@ -53,11 +56,16 @@ class WarTeliOp : BaseOpMode() {
 
     private lateinit var imu: IMU
 
-    private var ally = Alliance.BLU
+    private var ally = MutableReference(Alliance.BLU)
 
     private var autoSpeed = true
 
     private val panelsTelemetry = PanelsTelemetry.telemetry
+
+    private var launchVelDif = 0.0
+
+    private var prepingToFire = false
+
 
 
 
@@ -81,13 +89,13 @@ class WarTeliOp : BaseOpMode() {
 
 
     override fun init_loop() {
-        super.init_loop()
         if(gamepad1.xWasPressed()){
-            ally= Alliance.RED
+            ally(Alliance.RED)
         }else if(gamepad1.bWasPressed()){
-            ally = Alliance.BLU
+            ally(Alliance.BLU)
         }
-
+        telemetry.addLine("Alliance $ally")
+        telemetry.update()
     }
 
     override fun start() {
@@ -108,31 +116,31 @@ class WarTeliOp : BaseOpMode() {
         val launchSpeedIncrement = 25
 
         if(gamepad2.dpad_up){
-            launchSpeed = farZoneLaunchSpeed
+            launchVelocity = farZoneLaunchSpeed
         }
         if(gamepad2.dpad_down){
-            launchSpeed = nearZoneLaunchSpeed
+            launchVelocity = nearZoneLaunchSpeed
         }
         if(gamepad2.dpad_left){
-            launchSpeed = midZoneLauchSpeed
+            launchVelocity = midZoneLauchSpeed
         }
 
         if(gamepad2.yWasPressed()){
-            launchSpeed = 0.0
+            launchVelocity = 0.0
         }
-        if(launchSpeed > maxLaunchSpeed){
-            launchSpeed = maxLaunchSpeed
+        if(launchVelocity > maxLaunchSpeed){
+            launchVelocity = maxLaunchSpeed
         }
 
-        if(launchSpeed < 0.0){
-            launchSpeed = 0.0
+        if(launchVelocity < 0.0){
+            launchVelocity = 0.0
         }
 
 
         if (gamepad2.right_bumper) {
-            launchSpeed += launchSpeedIncrement
+            launchVelocity += launchSpeedIncrement
         } else if (gamepad2.left_bumper) {
-            launchSpeed -= launchSpeedIncrement
+            launchVelocity -= launchSpeedIncrement
         }
     }
 
@@ -141,17 +149,16 @@ class WarTeliOp : BaseOpMode() {
 
     }
     fun setDriveSpeedFromControl(){
-        if (gamepad1.right_bumper) {
+        if (gamepad1.rightBumperWasPressed()) {
             powerSettingIndex++
-            Thread.sleep(250L)
         }
-
-        if (gamepad1.left_bumper) {
+        if (gamepad1.leftBumperWasPressed()) {
             powerSettingIndex--
-            Thread.sleep(250L)
+
         }
 
-        powerSettingIndex %= powerSettings.size // keep power setting at 3
+        if(powerSettingIndex < 0){powerSettingIndex = powerSettings.size - 1}
+        powerSettingIndex %= powerSettings.size // keep power setting
         powerSettingIndex = abs(powerSettingIndex)
 
         drivePower = powerSettings[powerSettingIndex]
@@ -161,9 +168,13 @@ class WarTeliOp : BaseOpMode() {
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
-        yawMotion += getYawOverride()
+        if(abs(getYawOverride()) > 0.2){
+            yawMotion = getYawOverride()
+        }
+
 
         aimGide.update() // updates LED
+
 
 
         val motorPowers = arrayOf(
@@ -172,6 +183,9 @@ class WarTeliOp : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
+
+
+
         setDriveSpeedFromControl()
 
         // Normalize the values so no wheel power exceeds 100%
@@ -185,32 +199,53 @@ class WarTeliOp : BaseOpMode() {
             maxDriveMotorPower = 1.0
         }
         //motorPowers.forEachIndexed {i ,m-> motorPowers[i] /= abs(maxDriveMotorPower)}//
-        for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
 
-        driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
+
+
+        if(gamepad1.y){
+            baseHelper.handBreak()
+        }else if(gamepad1.yWasReleased()){
+            baseHelper.releaseHandBrake()
+        }else{
+            for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
+            driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
+        }
+
+        launchVelDif = baseHelper.getLaunchDiff()
 
         if(gamepad2.aWasPressed()){
-            baseHelper.launchBall()
+            prepingToFire = true
         }
+        if(prepingToFire && launchVelDif < 50){
+            baseHelper.launchBall()
+            prepingToFire = false
+        }else if(prepingToFire){
+            telemetry.addLine("waiting to fire")
+        }
+
         if(gamepad2.bWasPressed()){
             baseHelper.rightGateServoCycle()
         }
         if(gamepad2.xWasPressed()){
             baseHelper.leftGateServoCycle()
         }
-        if (autoSpeed && gamepad2.dpad_right){
-                autoSpeed = false
+        if (gamepad2.yWasPressed()){
+                autoSpeed = !autoSpeed
+                launchVelocity= 0.0
             }
-        if (!autoSpeed && gamepad2.dpad_right){
-            autoSpeed = true
+
+
+        if(autoSpeed){
+            launchVelocity = localizationClass.estimatedTicks
+        }else{
+            setLaunchSpeedOverride()
         }
-
-
-        launchSpeed = localizationClass.estimatedTicks
 
         for(m in launcherMotors){
-            m.velocity = launchSpeed
+            m.velocity = launchVelocity
         }
+
+
 
 
 
@@ -219,8 +254,13 @@ class WarTeliOp : BaseOpMode() {
         telemetry.addData("autoSpeed", localizationClass.estimatedTicks)
         telemetry.addData("left flywheel", leftLauncherMotor.velocity)
         telemetry.addData("right flywheel", rightLauncherMotor.velocity)
-        telemetry.addData("Power Setting",powerSettings)
+        telemetry.addData("Power Setting",powerSettings[powerSettingIndex])
+        telemetry.addData("allice", ally)
         telemetry.addData("aiming info", aimGide.toString())
+        telemetry.addData("pow setting index", powerSettingIndex)
+        telemetry.addData("launch speed dif", baseHelper.getLaunchDiff())
+        telemetry.addLine(autoSpeed.toString())
+
 
         telemetry.update()
         panelsTelemetry.update(telemetry)

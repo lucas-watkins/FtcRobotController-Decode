@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.firstinspires.ftc.teamcode.modular
 
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.LLResultTypes
@@ -48,7 +48,7 @@ data class FieldPos(
 
 class Localization {
     val limelight: Limelight3A
-    var alliance: Alliance
+    var alliance: MutableReference<Alliance>
     val imu: IMU
 
     private val bluGoalX = -1.4827
@@ -64,7 +64,7 @@ class Localization {
             limelight.updateRobotOrientation(robotYaw)
             val result: LLResult = limelight.latestResult
 
-            if (!result.isValid) {
+            if (!result.isValid) { // return early if invalid
                 return _fieldPosition
             }
 
@@ -78,12 +78,29 @@ class Localization {
             return _fieldPosition
         }
 
+    private var _motif: AprilTagType? = null
+    val motif: AprilTagType?
+        get() {
+            val result: LLResult = limelight.latestResult
+            val fiducials = result.fiducialResults
+            fiducials.forEach {
+                _motif = when (it.fiducialId) {
+                    21 -> AprilTagType.GPP
+                    22 -> AprilTagType.PGP
+                    23 -> AprilTagType.PPG
+                    else -> return@forEach
+                }
+            }
+
+            return _motif
+        }
+
     private var _distanceFromGoal: Double = 0.0
     val distanceFromGoal: Double
         get() {
             val fieldPos = this.fieldPosition ?: return _distanceFromGoal
 
-            val (goalX, goalY) = if (alliance == Alliance.BLU) {
+            val (goalX, goalY) = if (alliance() == Alliance.BLU) {
                 Pair(bluGoalX, bluGoalY)
             } else {
                 Pair(redGoalX, redGoalY)
@@ -147,7 +164,7 @@ class Localization {
     val angleToGoal: Double?
         get() {
             val tags = relativePositions
-            val targetTag = if (alliance == Alliance.BLU) AprilTagType.BlueGoal else AprilTagType.RedGoal
+            val targetTag = if (alliance() == Alliance.BLU) AprilTagType.BlueGoal else AprilTagType.RedGoal
 
             tags.forEach {
                 if (it.type == targetTag) {
@@ -158,7 +175,7 @@ class Localization {
             return null
         }
 
-    constructor(ll: Limelight3A, imu: IMU, currentAlliance: Alliance) {
+    constructor(ll: Limelight3A, imu: IMU, currentAlliance: MutableReference<Alliance>) {
         limelight = ll
         limelight.setPollRateHz(100)
         limelight.start()
