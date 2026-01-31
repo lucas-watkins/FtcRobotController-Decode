@@ -168,7 +168,7 @@ class WarTeliOp : BaseOpMode() {
         lateralMotion = gamepad1.left_stick_x.toDouble()
         yawMotion = gamepad1.right_stick_x.toDouble()
 
-        if(getYawOverride() > 0.2){
+        if(abs(getYawOverride()) > 0.2){
             yawMotion = getYawOverride()
         }
 
