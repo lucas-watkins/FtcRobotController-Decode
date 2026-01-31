@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.modular.Alliance
-import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
+import org.firstinspires.ftc.teamcode.modular.*
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
-import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
-import org.firstinspires.ftc.teamcode.modular.MutableReference
+
 
 @Autonomous(name = "RedGoalAutonomous", group = "RedTeam")
 class RedGoalAutonomous : BaseAutonomous() {
@@ -22,7 +20,7 @@ class RedGoalAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { /*pose.angle < 2.9*/ pose.angle > -2.9 },
+            { pose.angle < 2.9 },
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0

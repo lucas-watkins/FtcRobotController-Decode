@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.modular
 
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver
-
 class AutoStageExecutor(vararg val plan: Stage) {
     data class Stage(val condition: () -> Boolean, val exec: () -> Unit)
 

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDri
 import org.firstinspires.ftc.teamcode.modular.Localization
 import org.firstinspires.ftc.teamcode.modular.MutableReference
 
-@TeleOp(name = "org.firstinspires.ftc.teamcode.modular.Localization shenanigans", group = "Test opmodes")
+@TeleOp(name = "Localization Shenanigans", group = "Test opmodes")
 class LocalizationTest : LinearOpMode() {
     lateinit var localizationizer: Localization
     lateinit var aimingGuide: AimingGuide

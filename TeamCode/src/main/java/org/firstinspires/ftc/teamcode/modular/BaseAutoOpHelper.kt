@@ -9,12 +9,11 @@ class BaseAutoOpHelper(
     private val directionVector: Vector2<Double>,
     private val turnPower: Vector2<Double>,
     private val localization: Localization,
-    private val motif: MutableReference<Optional<AprilTagType>>
+    private val motif: MutableReference<Optional<AprilTagType>>,
 ) {
     val launchBallStage: Array<Stage>
         get() {
 
-            val initialLaunchMotorsVelocity = localization.estimatedTicks
 
             // might need to be a MutableReference
             var ballsLaunched = 0
@@ -23,14 +22,14 @@ class BaseAutoOpHelper(
 
             return arrayOf(
                 Stage(
-                    { helper.launchMotorsVelocity < initialLaunchMotorsVelocity },
+                    { helper.launchMotorsVelocity - localization.estimatedTicks !in -50.0..50.0 },
                     {
                         directionVector.x = 0.0
                         directionVector.y = 0.0
                         turnPower.x = 0.0
                         turnPower.y = 0.0
 
-                        helper.launchMotorsVelocity = initialLaunchMotorsVelocity
+                        helper.launchMotorsVelocity = localization.estimatedTicks
                     }
                 ),
 
@@ -74,7 +73,7 @@ class BaseAutoOpHelper(
                             helper.rightGateServoCycle()
                         }
 
-                        sleep(1000)
+                        sleep(750)
 
                         helper.launchBall()
                         ballsLaunched++
@@ -84,7 +83,7 @@ class BaseAutoOpHelper(
                 ),
 
                 Stage(
-                    { helper.launchMotorsVelocity > initialLaunchMotorsVelocity - 1 },
+                    { helper.launchMotorsVelocity > 25 },
                     {
                         helper.launchMotorsVelocity = 0.0
                     }

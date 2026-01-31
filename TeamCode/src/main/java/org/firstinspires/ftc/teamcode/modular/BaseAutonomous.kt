@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
+import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver
 import java.lang.Thread.sleep
 import java.util.*
 import kotlin.math.abs
@@ -24,6 +25,7 @@ abstract class BaseAutonomous : BaseOpMode() {
     protected var motif = MutableReference<Optional<AprilTagType>>(Optional.empty())
     protected lateinit var autoHelper: BaseAutoOpHelper
     protected lateinit var localization: Localization
+    protected lateinit var ledStrip: LedStrip
     private lateinit var plan: AutoStageExecutor
     private lateinit var odometry: GoBildaPinpointDriver
     private lateinit var limelight: Limelight3A
@@ -43,6 +45,9 @@ abstract class BaseAutonomous : BaseOpMode() {
         imu = hardwareMap["imu"] as IMU
         limelight = hardwareMap["limelight"] as Limelight3A
         localization = Localization(limelight, imu, alliance)
+
+        ledStrip = LedStrip(hardwareMap["goBildaPrism"] as GoBildaPrismDriver)
+        ledStrip.setColorRed()
 
         autoHelper = BaseAutoOpHelper(baseHelper, directionVector, turnPower, localization, motif)
         plan = getPlan()
@@ -70,6 +75,13 @@ abstract class BaseAutonomous : BaseOpMode() {
 
             if (newMotifs.size == 1) {
                 motif(Optional.of(newMotifs[0].type))
+
+                when (motif().get()) {
+                    AprilTagType.PPG -> ledStrip.setColorMotifPPG()
+                    AprilTagType.PGP -> ledStrip.setColorMotifPGP()
+                    AprilTagType.GPP -> ledStrip.setColorMotifGPP()
+                    else             -> ledStrip.setColorRed()
+                }
             }
         }
 
@@ -87,6 +99,7 @@ abstract class BaseAutonomous : BaseOpMode() {
         )
         telemetry.addLine("Servo Pos: ${servoLauncher.position}")
         telemetry.addLine("Motif ${if (motif().isEmpty) "N/A" else motif().get().id}")
+        telemetry.addLine("Angle to goal:  ${localization.angleToGoal}")
         telemetry.update()
 
         odometry.update()
@@ -99,6 +112,7 @@ abstract class BaseAutonomous : BaseOpMode() {
             turnPower.x = 0.0
             turnPower.y = 0.0
             isOpModeActive = false
+            ledStrip.setColorRed()
         }
 
         rotateDoubleVector(directionVector, pose.angle)
@@ -119,19 +133,4 @@ abstract class BaseAutonomous : BaseOpMode() {
         motorPowers.forEachIndexed { i, _ -> motorPowers[i] /= max }
         driveTrain.forEachIndexed { i, m -> m.velocity = motorPowers[i] * -velocity }
     }
-
-    protected val Pose2D.x: Double
-        get() {
-            return Units.convert(getX(DistanceUnit.CM), Units.CM, Units.TILE)
-        }
-
-    protected val Pose2D.y: Double
-        get() {
-            return Units.convert(getY(DistanceUnit.CM), Units.CM, Units.TILE)
-        }
-
-    protected val Pose2D.angle: Double
-        get() {
-            return getHeading(AngleUnit.RADIANS)
-        }
 }

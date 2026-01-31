@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import org.firstinspires.ftc.teamcode.modular.Alliance
-import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor
-import org.firstinspires.ftc.teamcode.modular.BaseAutonomous
-import org.firstinspires.ftc.teamcode.modular.MutableReference
+import org.firstinspires.ftc.teamcode.modular.*
 
 @Autonomous(name = "GoForward")
 class GoForward : BaseAutonomous() {

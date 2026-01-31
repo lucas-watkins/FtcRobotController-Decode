@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDri
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.GoBildaPrismDriver.LayerHeight
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.PrismAnimations
 import org.firstinspires.ftc.teamcode.modular.GoBildaPrismDriver.PrismAnimations.AnimationBase
+import java.lang.Thread.sleep
 
 @TeleOp(name = "LedProgram", group = "OpMode")
 class LedProgram : BaseOpMode() {
@@ -24,11 +25,24 @@ class LedProgram : BaseOpMode() {
             val redSolidAnimation = PrismAnimations.Solid(Color.RED, 255)
             val greenRightHalfAnimation = PrismAnimations.Snakes(6, 0, 1000, Color.TRANSPARENT, 0.0f, Color.GREEN, Color.RED, Color.RED, Color.GREEN)
             val greenLeftHalfAnimation = PrismAnimations.Snakes(6, 0, 1000, Color.TRANSPARENT, 0.0f, Color.RED, Color.GREEN, Color.GREEN, Color.RED)
+            val motifPPG = PrismAnimations.Snakes(4,0, 1000, Color.TRANSPARENT, 0.0f, Color.GREEN, Color.PURPLE, Color.PURPLE, Color.PURPLE, Color.PURPLE, Color.GREEN)
+            val motifPGP = PrismAnimations.Snakes(4,0, 1000, Color.TRANSPARENT, 0.0f, Color.PURPLE, Color.GREEN, Color.PURPLE, Color.PURPLE, Color.GREEN, Color.PURPLE)
+            val motifGPP = PrismAnimations.Snakes(4,0, 1000, Color.TRANSPARENT, 0.0f, Color.PURPLE, Color.PURPLE, Color.GREEN, Color.GREEN, Color.PURPLE, Color.PURPLE)
 
             program(greenLeftHalfAnimation, Artboard.ARTBOARD_0)
             program(greenRightHalfAnimation, Artboard.ARTBOARD_1)
             program(greenSolidAnimation, Artboard.ARTBOARD_2)
             program(redSolidAnimation, Artboard.ARTBOARD_3)
+            program(motifPPG, Artboard.ARTBOARD_4)
+            program(motifPGP, Artboard.ARTBOARD_5)
+            program(motifGPP, Artboard.ARTBOARD_6)
+
+            // All green
+            driver.loadAnimationsFromArtboard(Artboard.ARTBOARD_2)
+            sleep(5000)
+
+            // All red (default)
+            driver.loadAnimationsFromArtboard(Artboard.ARTBOARD_3)
 
             initialized = true
         } else {
