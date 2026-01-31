@@ -5,6 +5,8 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.hardware.IMU
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
+import kotlin.math.exp
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 enum class AprilTagType(val id: Int) {
@@ -120,7 +122,7 @@ class Localization {
     private var _estimatedTicks: Double = 0.0
     val estimatedTicks: Double
         get() {
-            _estimatedTicks = (1.5102 * this.distanceFromGoal) + 1837.16327
+            _estimatedTicks = (0.00483366 * this.distanceFromGoal.pow(2)) + (-0.671409 * this.distanceFromGoal) + 1966.1575
             return _estimatedTicks
         }
 
