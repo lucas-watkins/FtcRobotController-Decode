@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.modular
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D
 import org.firstinspires.ftc.teamcode.modular.AutoStageExecutor.Stage
 import java.lang.Thread.sleep
 import java.util.*
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class BaseAutoOpHelper(
     private val helper: BaseOpHelper,
@@ -13,14 +10,10 @@ class BaseAutoOpHelper(
     private val turnPower: Vector2<Double>,
     private val localization: Localization,
     private val motif: MutableReference<Optional<AprilTagType>>,
-    private val pose: MutableReference<Pose2D>,
-    private val goalLocation: Pose2D
 ) {
     val launchBallStage: Array<Stage>
         get() {
 
-            val distanceFromGoal = sqrt((pose().x - goalLocation.x).pow(2) + (pose().y - goalLocation.y).pow(2))
-            val launchMotorsVelocity = 1.5102 * distanceFromGoal + 1837.16327
 
             // might need to be a MutableReference
             var ballsLaunched = 0
@@ -29,14 +22,14 @@ class BaseAutoOpHelper(
 
             return arrayOf(
                 Stage(
-                    { helper.launchMotorsVelocity < launchMotorsVelocity },
+                    { helper.launchMotorsVelocity - localization.estimatedTicks !in -50.0..50.0 },
                     {
                         directionVector.x = 0.0
                         directionVector.y = 0.0
                         turnPower.x = 0.0
                         turnPower.y = 0.0
 
-                        helper.launchMotorsVelocity = launchMotorsVelocity
+                        helper.launchMotorsVelocity = localization.estimatedTicks
                     }
                 ),
 
@@ -84,11 +77,13 @@ class BaseAutoOpHelper(
 
                         helper.launchBall()
                         ballsLaunched++
+
+                        helper.launchMotorsVelocity = localization.estimatedTicks
                     }
                 ),
 
                 Stage(
-                    { helper.launchMotorsVelocity > launchMotorsVelocity - 1 },
+                    { helper.launchMotorsVelocity > 25 },
                     {
                         helper.launchMotorsVelocity = 0.0
                     }

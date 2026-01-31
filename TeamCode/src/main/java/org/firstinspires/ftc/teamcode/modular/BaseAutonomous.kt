@@ -18,8 +18,7 @@ import kotlin.math.abs
 abstract class BaseAutonomous : BaseOpMode() {
     protected abstract fun getPlan(): AutoStageExecutor
     protected abstract val alliance: MutableReference<Alliance>
-    protected abstract val goalLocation: Pose2D
-    protected var pose = MutableReference(Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0))
+    protected var pose = Pose2D(DistanceUnit.CM, 0.0, 0.0, AngleUnit.RADIANS, 0.0)
     protected val directionVector = Vector2(0.0, 0.0)
     protected var turnPower = Vector2(0.0, 0.0)
     protected var isOpModeActive = true
@@ -48,8 +47,9 @@ abstract class BaseAutonomous : BaseOpMode() {
         localization = Localization(limelight, imu, alliance)
 
         ledStrip = LedStrip(hardwareMap["goBildaPrism"] as GoBildaPrismDriver)
+        ledStrip.setColorRed()
 
-        autoHelper = BaseAutoOpHelper(baseHelper, directionVector, turnPower, localization, motif, pose, goalLocation)
+        autoHelper = BaseAutoOpHelper(baseHelper, directionVector, turnPower, localization, motif)
         plan = getPlan()
 
         driveTrain.forEach { m -> m.mode = RunMode.RUN_USING_ENCODER }
@@ -92,17 +92,18 @@ abstract class BaseAutonomous : BaseOpMode() {
 
         telemetry.addLine("Direction: $directionVector")
         telemetry.addLine("Stage Number: ${plan.getStageNumber()}")
-        telemetry.addLine("Angle: ${pose().angle}")
+        telemetry.addLine("Angle: ${pose.angle}")
         telemetry.addLine("Odometry (tile): \n" +
-                "x -> ${pose().x}\n" +
-                "y -> ${pose().y}"
+                "x -> ${pose.x}\n" +
+                "y -> ${pose.y}"
         )
         telemetry.addLine("Servo Pos: ${servoLauncher.position}")
         telemetry.addLine("Motif ${if (motif().isEmpty) "N/A" else motif().get().id}")
+        telemetry.addLine("Angle to goal:  ${localization.angleToGoal}")
         telemetry.update()
 
         odometry.update()
-        pose(odometry.position)
+        pose = odometry.position
 
 
         if (isOpModeActive && !plan.update()) {
@@ -111,9 +112,10 @@ abstract class BaseAutonomous : BaseOpMode() {
             turnPower.x = 0.0
             turnPower.y = 0.0
             isOpModeActive = false
+            ledStrip.setColorRed()
         }
 
-        rotateDoubleVector(directionVector, pose().angle)
+        rotateDoubleVector(directionVector, pose.angle)
         updateDriveTrain(directionVector, turnPower)
     }
 
