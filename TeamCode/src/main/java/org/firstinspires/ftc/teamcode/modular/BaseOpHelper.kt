@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.modular
 
+
+
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
+
+import kotlin.math.abs
 
 class BaseOpHelper(
     private val leftGateServo : Servo,
@@ -10,9 +14,16 @@ class BaseOpHelper(
     private val leftLauncherMotor: DcMotorEx,
     private val rightLauncherMotor: DcMotorEx,
     private val servoLauncher: Servo,
-    private val driveTrain: Array<DcMotorEx>
+    private val driveTrain: Array<DcMotorEx>,
+
+
 ) {
     private val delay: Long = 700
+
+    fun getLaunchDiff(): Double{
+        return abs(leftLauncherMotor.velocity - rightLauncherMotor.velocity)
+
+    }
     fun leftGateServoCycle(){
         leftGateServo.position = 0.4
         Thread.sleep(delay)
@@ -47,7 +58,6 @@ class BaseOpHelper(
             if (leftLauncherMotor.velocity - rightLauncherMotor.velocity in -1.0..1.0) {
                 return leftLauncherMotor.velocity
             }
-
             return -1.0
         }
 
@@ -56,23 +66,19 @@ class BaseOpHelper(
             rightLauncherMotor.velocity = velocity
         }
 
+
+
     fun launchBall() {
         // fires the ball with a condition for high and low speed launching
+        // handBreak() // stops the robot in one place
         val firePos = 0.9
         val restingPos = 0.7
-        /*if (leftLauncherMotor.velocity > 1950) {
-            servoLauncher.position = firePos
-            Thread.sleep(500)
-            servoLauncher.position = restingPos
-        } else {
-            // offset to account for wheels being smaller at slow speed
-            servoLauncher.position = firePos + 0.1
-            Thread.sleep(500)
-            servoLauncher.position = restingPos
-        }*/
 
         servoLauncher.position = firePos
         Thread.sleep(500)
         servoLauncher.position = restingPos
+
+
+
     }
 }
