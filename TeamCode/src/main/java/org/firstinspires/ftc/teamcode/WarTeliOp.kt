@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.bylazar.telemetry.JoinedTelemetry
 import com.bylazar.telemetry.PanelsTelemetry
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -60,23 +61,21 @@ class WarTeliOp : BaseOpMode() {
 
     private var autoSpeed = true
 
-    private val panelsTelemetry = PanelsTelemetry.telemetry
+    //private val panelsTelemetry = PanelsTelemetry.telemetry
 
     private var launchVelDif = 0.0
 
-    private var prepingToFire = false
+    private var preparingToFire = false
 
-
-
+    val joinedTelemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
 
     override fun initialize() {
-
-        telemetry.addData("Status", "Initialized")
-        telemetry.update()
+        joinedTelemetry.addData("Status", "Initialized")
+        joinedTelemetry.update()
         runtime.reset()
         limelight = hardwareMap.get(Limelight3A::class.java, "limelight")
         ledDriver = hardwareMap.get(GoBildaPrismDriver::class.java, "goBildaPrism")
@@ -86,16 +85,14 @@ class WarTeliOp : BaseOpMode() {
 
     }
 
-
-
     override fun init_loop() {
         if(gamepad1.xWasPressed()){
             ally(Alliance.RED)
         }else if(gamepad1.bWasPressed()){
             ally(Alliance.BLU)
         }
-        telemetry.addLine("Alliance $ally")
-        telemetry.update()
+        joinedTelemetry.addLine("Alliance $ally")
+        joinedTelemetry.update()
     }
 
     override fun start() {
@@ -109,7 +106,7 @@ class WarTeliOp : BaseOpMode() {
     fun setLaunchSpeedOverride(){
         val nearZoneLaunchSpeed = 1600.0
 
-        val midZoneLauchSpeed = 1800.0
+        val midZoneLaunchSpeed = 1800.0
 
         val farZoneLaunchSpeed = 2100.0
 
@@ -122,7 +119,7 @@ class WarTeliOp : BaseOpMode() {
             launchVelocity = nearZoneLaunchSpeed
         }
         if(gamepad2.dpad_left){
-            launchVelocity = midZoneLauchSpeed
+            launchVelocity = midZoneLaunchSpeed
         }
 
         if(gamepad2.yWasPressed()){
@@ -172,10 +169,7 @@ class WarTeliOp : BaseOpMode() {
             yawMotion = getYawOverride()
         }
 
-
         aimGide.update() // updates LED
-
-
 
         val motorPowers = arrayOf(
             -gamepad1.left_stick_y + gamepad1.left_stick_x + yawMotion,
@@ -183,8 +177,6 @@ class WarTeliOp : BaseOpMode() {
             -gamepad1.left_stick_y - gamepad1.left_stick_x + yawMotion,
             -gamepad1.left_stick_y + gamepad1.left_stick_x - yawMotion,
         )
-
-
 
         setDriveSpeedFromControl()
 
@@ -200,8 +192,6 @@ class WarTeliOp : BaseOpMode() {
         }
         //motorPowers.forEachIndexed {i ,m-> motorPowers[i] /= abs(maxDriveMotorPower)}//
 
-
-
         if(gamepad1.y){
             baseHelper.handBreak()
         }else if(gamepad1.yWasReleased()){
@@ -214,13 +204,13 @@ class WarTeliOp : BaseOpMode() {
         launchVelDif = baseHelper.getLaunchDiff()
 
         if(gamepad2.aWasPressed()){
-            prepingToFire = true
+            preparingToFire = true
         }
-        if(prepingToFire && launchVelDif < 50){
+        if(preparingToFire && launchVelDif < 50){
             baseHelper.launchBall()
-            prepingToFire = false
-        }else if(prepingToFire){
-            telemetry.addLine("waiting to fire")
+            preparingToFire = false
+        }else if(preparingToFire){
+            joinedTelemetry.addLine("waiting to fire")
         }
 
         if(gamepad2.bWasPressed()){
@@ -234,7 +224,6 @@ class WarTeliOp : BaseOpMode() {
                 launchVelocity= 0.0
             }
 
-
         if(autoSpeed){
             launchVelocity = localizationClass.estimatedTicks
         }else{
@@ -245,29 +234,18 @@ class WarTeliOp : BaseOpMode() {
             m.velocity = launchVelocity
         }
 
+        joinedTelemetry.addData("autoSpeed", localizationClass.estimatedTicks)
+        joinedTelemetry.addData("left flywheel", leftLauncherMotor.velocity)
+        joinedTelemetry.addData("right flywheel", rightLauncherMotor.velocity)
+        joinedTelemetry.addData("Power Setting",powerSettings[powerSettingIndex])
+        joinedTelemetry.addData("allice", ally)
+        joinedTelemetry.addData("aiming info", aimGide.toString())
+        joinedTelemetry.addData("pow setting index", powerSettingIndex)
+        joinedTelemetry.addData("launch speed dif", baseHelper.getLaunchDiff())
+        joinedTelemetry.addLine(autoSpeed.toString())
 
-
-
-
-
-
-        telemetry.addData("autoSpeed", localizationClass.estimatedTicks)
-        telemetry.addData("left flywheel", leftLauncherMotor.velocity)
-        telemetry.addData("right flywheel", rightLauncherMotor.velocity)
-        telemetry.addData("Power Setting",powerSettings[powerSettingIndex])
-        telemetry.addData("allice", ally)
-        telemetry.addData("aiming info", aimGide.toString())
-        telemetry.addData("pow setting index", powerSettingIndex)
-        telemetry.addData("launch speed dif", baseHelper.getLaunchDiff())
-        telemetry.addLine(autoSpeed.toString())
-
-
-        telemetry.update()
-        panelsTelemetry.update(telemetry)
+        joinedTelemetry.update()
     }
-
-
-
     /*
      * Code to run ONCE after the driver hits STOP
      */
