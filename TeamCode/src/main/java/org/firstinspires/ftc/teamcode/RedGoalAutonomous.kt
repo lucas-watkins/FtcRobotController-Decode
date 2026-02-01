@@ -20,7 +20,7 @@ class RedGoalAutonomous : BaseAutonomous() {
         ),
 
         Stage(
-            { pose.angle < 2.9 },
+            { pose.angle < 3.0 },
             {
                 directionVector.x = 0.0
                 directionVector.y = 0.0

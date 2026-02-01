@@ -69,11 +69,14 @@ class WarTeliOp : BaseOpMode() {
 
     val joinedTelemetry = JoinedTelemetry(PanelsTelemetry.ftcTelemetry, telemetry)
 
+    var startingMatch = true //new code caden
+
     /*
      * Code to run ONCE when the driver hits INIT
      */
 
     override fun initialize() {
+        baseHelper.handBreak() // new code
         joinedTelemetry.addData("Status", "Initialized")
         joinedTelemetry.update()
         runtime.reset()
@@ -93,6 +96,7 @@ class WarTeliOp : BaseOpMode() {
         }
         joinedTelemetry.addLine("Alliance $ally")
         joinedTelemetry.update()
+
     }
 
     override fun start() {
@@ -192,10 +196,21 @@ class WarTeliOp : BaseOpMode() {
         }
         //motorPowers.forEachIndexed {i ,m-> motorPowers[i] /= abs(maxDriveMotorPower)}//
 
-        if(gamepad1.y){
+        /*
+         if(gamepad1.y){
             baseHelper.handBreak()
         }else if(gamepad1.yWasReleased()){
             baseHelper.releaseHandBrake()
+        }else{
+            for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
+            driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
+        }
+         */
+        if(gamepad1.y || startingMatch){
+            baseHelper.handBreak()
+        }else if(gamepad1.yWasReleased()){
+            baseHelper.releaseHandBrake()
+            startingMatch = false
         }else{
             for(i in motorPowers.indices){motorPowers[i] /= abs(maxDriveMotorPower)}
             driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
