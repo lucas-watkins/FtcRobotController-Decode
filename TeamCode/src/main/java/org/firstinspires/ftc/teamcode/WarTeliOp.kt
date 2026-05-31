@@ -76,7 +76,7 @@ class WarTeliOp : BaseOpMode() {
      */
 
     override fun initialize() {
-        baseHelper.handBreak() // new code
+        //baseHelper.handBreak() // new code
         joinedTelemetry.addData("Status", "Initialized")
         joinedTelemetry.update()
         runtime.reset()
@@ -85,6 +85,7 @@ class WarTeliOp : BaseOpMode() {
         imu = hardwareMap.get(IMU::class.java, "imu")
         localizationClass = Localization(limelight, imu, ally)
         aimGide = AimingGuide(ledDriver, localizationClass)
+
 
     }
 
@@ -206,7 +207,7 @@ class WarTeliOp : BaseOpMode() {
             driveTrain.forEachIndexed {i, m -> m.power = motorPowers[i] * drivePower}
         }
          */
-        if(gamepad1.y || startingMatch){
+        if(gamepad1.y){
             baseHelper.handBreak()
         }else if(gamepad1.yWasReleased()){
             baseHelper.releaseHandBrake()
@@ -258,6 +259,7 @@ class WarTeliOp : BaseOpMode() {
         joinedTelemetry.addData("pow setting index", powerSettingIndex)
         joinedTelemetry.addData("launch speed dif", baseHelper.getLaunchDiff())
         joinedTelemetry.addLine(autoSpeed.toString())
+        joinedTelemetry.addLine(startingMatch.toString())
 
         joinedTelemetry.update()
     }
